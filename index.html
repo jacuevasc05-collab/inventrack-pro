@@ -359,9 +359,9 @@ function rS4(){
     +'<div class="sheets-card">'
     +'<div style="font-size:36px;margin-bottom:10px">📊</div>'
     +'<div style="font-size:16px;font-weight:700;margin-bottom:6px">Exportar a Google Sheets</div>'
-    +'<div style="font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.6">Descarga un archivo CSV con todos los datos.<br>Luego ábrelo en Google Sheets.</div>'
-    +'<div style="font-size:11px;color:var(--t3);margin-bottom:18px;line-height:1.5">1. Toca "Descargar CSV"<br>2. Abre Google Sheets<br>3. Archivo → Importar → sube el CSV</div>'
-    +'<button class="btn-export" id="eb" onclick="doExp()">📥 Descargar CSV</button>'
+    +'<div style="font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.6">Crea una hoja en tu Google Drive<br>con colores automáticos por estado.</div>'
+    +'<div style="font-size:11px;color:var(--t3);margin-bottom:18px;line-height:1.5">Te pedirá permiso para acceder<br>a Google Sheets — es seguro ✓</div>'
+    +'<button class="btn-export" id="eb" onclick="doExp()">📊 Crear hoja en Google Sheets</button>'
     +'</div><div class="div"></div>'
     +'<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:8px">Leyenda de colores</div>';
   Object.entries(ST).forEach(function(entry){
@@ -382,58 +382,176 @@ function rS4(){
     +'<div class="nav-bottom"><button class="btn btn-ghost" onclick="navTo(2)">← Anterior</button><button class="btn btn-ghost" onclick="resetAll()">🔄 Nueva sesión</button></div>';
   return html;
 }
-function doExp(){
-  // Construir filas
-  const rows=S.inv.map(function(inv){
-    const sc=S.scans.find(function(s){return s.code===inv.code;});
-    const scanned=sc?sc.scanned:0;
-    const diff=scanned-inv.qty;
-    let estado;
-    if(scanned===0)estado="Sin escanear";
-    else if(scanned===inv.qty)estado="Coincide exacto";
-    else if(scanned<inv.qty)estado="Faltan "+(inv.qty-scanned);
-    else estado="Sobran "+(scanned-inv.qty);
-    return[inv.code,inv.desc,inv.size,inv.qty,scanned,diff===0?"—":diff>0?"+"+diff:diff,estado];
+// ═══ GOOGLE SHEETS INTEGRATION ═══
+const GAPI_CLIENT_ID="762235558527-ikpopjf8ktqa3l8rj0ugfpd5p9uqbnhq.apps.googleusercontent.com";
+const GAPI_SCOPES="https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file";
+let gapiReady=false;
+let tokenClient=null;
+
+function loadGapi(){
+  return new Promise(function(res){
+    if(window.gapi&&gapiReady){res();return;}
+    const s1=document.createElement("script");
+    s1.src="https://apis.google.com/js/api.js";
+    s1.onload=function(){
+      window.gapi.load("client",function(){
+        window.gapi.client.init({}).then(function(){
+          gapiReady=true;res();
+        });
+      });
+    };
+    document.head.appendChild(s1);
   });
-  const extras=S.scans.filter(function(s){return!s.inInvoice;}).map(function(s){
-    return[s.code,s.desc,s.size,"—",s.scanned,"—","Fuera de factura"];
+}
+
+function loadGis(){
+  return new Promise(function(res){
+    if(window.google&&window.google.accounts){res();return;}
+    const s=document.createElement("script");
+    s.src="https://accounts.google.com/gsi/client";
+    s.onload=res;
+    document.head.appendChild(s);
   });
-  const all=rows.concat(extras);
+}
 
-  // Cabecera
-  const header=["Código","Descripción","Talla","Cant. Factura","Cant. Escaneada","Diferencia","Estado"];
-
-  // Convertir a CSV
-  const csv=[header].concat(all).map(function(row){
-    return row.map(function(cell){
-      const s=String(cell==null?"":cell);
-      // Escapar comillas y envolver en comillas si tiene coma
-      if(s.includes(",")||s.includes('"')||s.includes("\n")){
-        return'"'+s.replace(/"/g,'""')+'"';
-      }
-      return s;
-    }).join(",");
-  }).join("\n");
-
-  // Añadir BOM para que Excel/Sheets reconozca UTF-8
-  const bom="\uFEFF";
-  const blob=new Blob([bom+csv],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);
-
-  // Descargar
-  const fecha=new Date().toLocaleDateString("es-ES").replace(/\//g,"-");
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="InvenTrack-"+fecha+".csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(function(){URL.revokeObjectURL(url);},1000);
-
-  toast("✓ CSV descargado — ábrelo en Google Sheets","success");
-
+async function doExp(){
   const btn=document.getElementById("eb");
-  if(btn){btn.textContent="✓ Descargado — exporta de nuevo";btn.style.background="#4ade80";}
+  if(btn){btn.textContent="⟳ Conectando con Google...";btn.disabled=true;}
+
+  try{
+    // Cargar librerías de Google
+    await Promise.all([loadGapi(),loadGis()]);
+
+    // Pedir token OAuth
+    await new Promise(function(res,rej){
+      tokenClient=window.google.accounts.oauth2.initTokenClient({
+        client_id:GAPI_CLIENT_ID,
+        scope:GAPI_SCOPES,
+        callback:function(resp){
+          if(resp.error){rej(resp);return;}
+          res(resp);
+        },
+      });
+      tokenClient.requestAccessToken({prompt:"consent"});
+    });
+
+    if(btn)btn.textContent="⟳ Creando hoja de cálculo...";
+
+    // Preparar datos
+    const fecha=new Date().toLocaleDateString("es-ES");
+    const rows=S.inv.map(function(inv){
+      const sc=S.scans.find(function(s){return s.code===inv.code;});
+      const scanned=sc?sc.scanned:0;
+      const diff=scanned-inv.qty;
+      let estado;
+      if(scanned===0)estado="Sin escanear";
+      else if(scanned===inv.qty)estado="Coincide exacto";
+      else if(scanned<inv.qty)estado="Faltan "+(inv.qty-scanned);
+      else estado="Sobran "+(scanned-inv.qty);
+      return[inv.code,inv.desc,inv.size,inv.qty,scanned,diff===0?0:diff,estado];
+    });
+    const extras=S.scans.filter(function(s){return!s.inInvoice;}).map(function(s){
+      return[s.code,s.desc,s.size,"—",s.scanned,"—","Fuera de factura"];
+    });
+
+    const header=[["Código","Descripción","Talla","Cant. Factura","Cant. Escaneada","Diferencia","Estado"]];
+    const allRows=header.concat(rows).concat(extras);
+
+    // 1. Crear spreadsheet
+    const createResp=await window.gapi.client.request({
+      path:"https://sheets.googleapis.com/v4/spreadsheets",
+      method:"POST",
+      body:JSON.stringify({
+        properties:{title:"InvenTrack Pro — "+fecha},
+        sheets:[{properties:{title:"Inventario"}}]
+      })
+    });
+    const sheetId=createResp.result.spreadsheetId;
+    const gid=createResp.result.sheets[0].properties.sheetId;
+
+    // 2. Escribir datos
+    await window.gapi.client.request({
+      path:"https://sheets.googleapis.com/v4/spreadsheets/"+sheetId+"/values/Inventario!A1",
+      method:"PUT",
+      params:{valueInputOption:"USER_ENTERED"},
+      body:JSON.stringify({values:allRows})
+    });
+
+    // 3. Aplicar formatos: cabecera + colores por estado
+    const requests=[];
+
+    // Cabecera negra con texto blanco
+    requests.push({repeatCell:{
+      range:{sheetId:gid,startRowIndex:0,endRowIndex:1,startColumnIndex:0,endColumnIndex:7},
+      cell:{userEnteredFormat:{
+        backgroundColor:{red:0.1,green:0.1,blue:0.1},
+        textFormat:{bold:true,foregroundColor:{red:1,green:1,blue:1}},
+        horizontalAlignment:"CENTER"
+      }},
+      fields:"userEnteredFormat"
+    }});
+
+    // Colores por estado (filas de datos)
+    const colorMap={
+      "Coincide exacto":   {r:0.13,g:0.77,b:0.37},
+      "Sin escanear":      {r:0.94,g:0.27,b:0.27},
+      "Fuera de factura":  {r:0.5, g:0.5, b:0.5 },
+    };
+
+    rows.forEach(function(row,i){
+      const estado=row[6];
+      let color;
+      if(estado==="Coincide exacto")color={red:0.13,green:0.77,blue:0.37};
+      else if(estado==="Sin escanear")color={red:0.94,green:0.27,blue:0.27};
+      else color={red:0.96,green:0.62,blue:0.04}; // amarillo = diferente cantidad
+
+      requests.push({repeatCell:{
+        range:{sheetId:gid,startRowIndex:i+1,endRowIndex:i+2,startColumnIndex:0,endColumnIndex:7},
+        cell:{userEnteredFormat:{
+          backgroundColor:{red:color.red*0.15,green:color.green*0.15,blue:color.blue*0.15},
+          textFormat:{foregroundColor:{red:color.red,green:color.green,blue:color.blue}}
+        }},
+        fields:"userEnteredFormat"
+      }});
+    });
+
+    // Filas fuera de factura en gris
+    extras.forEach(function(_,i){
+      requests.push({repeatCell:{
+        range:{sheetId:gid,startRowIndex:rows.length+1+i,endRowIndex:rows.length+2+i,startColumnIndex:0,endColumnIndex:7},
+        cell:{userEnteredFormat:{
+          backgroundColor:{red:0.15,green:0.15,blue:0.15},
+          textFormat:{foregroundColor:{red:0.6,green:0.6,blue:0.6}}
+        }},
+        fields:"userEnteredFormat"
+      }});
+    });
+
+    // Ajustar ancho columnas
+    requests.push({autoResizeDimensions:{dimensions:{sheetId:gid,dimension:"COLUMNS",startIndex:0,endIndex:7}}});
+
+    await window.gapi.client.request({
+      path:"https://sheets.googleapis.com/v4/spreadsheets/"+sheetId+"/batchUpdate",
+      method:"POST",
+      body:JSON.stringify({requests:requests})
+    });
+
+    // 4. Abrir la hoja
+    const url="https://docs.google.com/spreadsheets/d/"+sheetId;
+    window.open(url,"_blank");
+
+    toast("✓ Hoja creada con colores en Google Sheets","success");
+    if(btn){
+      btn.innerHTML='<a href="'+url+'" target="_blank" style="color:#000;text-decoration:none">📊 Abrir en Google Sheets</a>';
+      btn.disabled=false;
+      btn.style.background="#4ade80";
+    }
+
+  }catch(err){
+    console.error(err);
+    toast("Error: "+( err.message||JSON.stringify(err)),"error");
+    if(btn){btn.textContent="📥 Reintentar";btn.disabled=false;}
+  }
 }
 function resetAll(){stopCam();S={step:0,inv:DI.map(function(x){return Object.assign({},x);}),scans:[],log:[],mode:"manual",stream:null,camOn:false,fq:""};render();toast("Nueva sesión iniciada","info");}
 
