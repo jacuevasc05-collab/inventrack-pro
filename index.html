@@ -3,167 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>InvenTrack Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg0:#05090e;--bg1:#09111a;--bg2:#0d1822;--bg3:#122030;
-  --b1:#1a2e42;--b2:#1f3750;
-  --t0:#e8f2fc;--t1:#9bbdd8;--t2:#5a88a8;--t3:#2e5570;
-  --acc:#00d4ff;--acc2:#0099ff;
-  --ff:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;
-}
-body{background:var(--bg0);color:var(--t0);font-family:var(--ff);min-height:100vh;-webkit-tap-highlight-color:transparent}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+:root{--bg0:#05090e;--bg1:#09111a;--bg2:#0d1822;--bg3:#122030;--b1:#1a2e42;--b2:#1f3750;--t0:#e8f2fc;--t1:#9bbdd8;--t2:#5a88a8;--t3:#2e5570;--acc:#00d4ff;--acc2:#0099ff;--ff:'Familjen Grotesk',sans-serif;--fm:'JetBrains Mono',monospace}
+body{background:var(--bg0);color:var(--t0);font-family:var(--ff);min-height:100vh;-webkit-text-size-adjust:100%;padding-bottom:40px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes scanBeam{0%{top:4%}50%{top:88%}100%{top:4%}}
-@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pop{0%{transform:scale(.9);opacity:0}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
-
-/* TOP BAR */
-.topbar{position:sticky;top:0;z-index:100;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(5,9,14,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
-.logo{display:flex;align-items:center;gap:9px}
-.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--acc2),var(--acc));display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:12px;font-weight:700;color:#000}
-.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
-.logo-text span{color:var(--t2);font-weight:400;font-size:12px}
-
-/* STEP BAR */
-.stepbar{display:flex;background:var(--bg1);border-bottom:1px solid var(--b1);overflow-x:auto;padding:0 8px}
-.stepbar::-webkit-scrollbar{display:none}
-.step-btn{flex:1;min-width:70px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border:none;background:transparent;color:var(--t3);font-family:var(--ff);font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
-.step-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
-.step-btn.done{color:var(--t1)}
-.step-n{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--fm)}
-.step-btn.active .step-n{background:rgba(0,212,255,.12)}
-.step-btn.done .step-n{background:rgba(34,197,94,.12);border-color:#22c55e;color:#4ade80}
-
-/* MAIN */
-.main{padding:16px;max-width:600px;margin:0 auto}
-
-/* CARD */
-.card{background:var(--bg1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:14px;animation:fadeUp .3s ease}
+@keyframes scanBeam{0%{top:0}50%{top:90%}100%{top:0}}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.topbar{position:sticky;top:0;z-index:100;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(5,9,14,.95);border-bottom:1px solid var(--b1)}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--acc2),var(--acc));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000}
+.logo-text{font-size:14px;font-weight:700}
+.logo-text span{color:var(--t2);font-weight:400}
+.stepbar{display:flex;background:var(--bg1);border:1px solid var(--b1);border-radius:10px;padding:4px;margin:12px 12px 0}
+.step{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;border-radius:7px;cursor:pointer;transition:background .2s}
+.step.active{background:var(--bg3)}
+.step-n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--fm);border:1.5px solid var(--b2);color:var(--t3);flex-shrink:0}
+.step.active .step-n{border-color:var(--acc);color:var(--acc);background:rgba(0,212,255,.1)}
+.step.done .step-n{border-color:#22c55e;background:rgba(34,197,94,.12);color:#4ade80}
+.step-lbl{font-size:10px;font-weight:500;color:var(--t3)}
+.step.active .step-lbl{color:var(--t0)}
+.step.done .step-lbl{color:var(--t1)}
+.main{padding:12px}
+.card{background:var(--bg1);border:1px solid var(--b1);border-radius:11px;overflow:hidden;animation:fadeUp .3s ease;margin-bottom:12px}
 .card-head{padding:12px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.8px}
+.card-title{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.8px}
 .card-body{padding:16px}
-
-/* DROP ZONE */
-.drop-zone{border:2px dashed var(--b2);border-radius:10px;padding:36px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
-.drop-zone:active,.drop-zone.over{border-color:var(--acc);background:rgba(0,212,255,.03)}
-.drop-icon{font-size:36px;margin-bottom:12px}
-.drop-t1{font-size:15px;font-weight:600;margin-bottom:6px}
-.drop-t2{font-size:12px;color:var(--t2);font-family:var(--fm)}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--ff);border:none;cursor:pointer;transition:all .15s;width:100%;margin-top:8px}
+.drop-zone{border:2px dashed var(--b2);border-radius:9px;padding:32px 16px;text-align:center;cursor:pointer;background:var(--bg2)}
+.prog-wrap{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:10px 0 5px}
+.prog-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--acc2),var(--acc));transition:width .35s ease}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border-radius:8px;font-size:14px;font-weight:600;font-family:var(--ff);border:none;cursor:pointer;min-height:48px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .btn-prime{background:var(--acc);color:#000}
 .btn-prime:active{background:#33ddff}
-.btn-ghost{background:var(--bg2);color:var(--t1);border:1px solid var(--b2);margin-top:8px}
-.btn-green{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
-.btn-sm{padding:7px 14px;font-size:12px;width:auto;margin-top:0}
-
-/* PROGRESS */
-.prog-wrap{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:10px 0 6px}
-.prog-bar{height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));transition:width .3s ease;border-radius:2px}
-
-/* INPUT */
-.inp{background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:11px 14px;font-size:14px;font-family:var(--fm);color:var(--t0);outline:none;width:100%;transition:border-color .2s}
+.btn-ghost{background:var(--bg2);color:var(--t1);border:1px solid var(--b2)}
+.btn-ghost:active{background:var(--bg3)}
+.btn-full{width:100%}
+.inp{background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:12px 13px;font-size:16px;font-family:var(--fm);color:var(--t0);outline:none;width:100%;-webkit-appearance:none;min-height:48px}
 .inp:focus{border-color:var(--acc)}
 .inp::placeholder{color:var(--t3)}
 .inp-row{display:flex;gap:8px;margin-bottom:10px}
-.inp-sm{width:72px;flex:none}
-
-/* SCAN OPTS */
+.inp-sm{width:80px!important;flex-shrink:0}
 .scan-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.scan-opt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:9px;background:var(--bg2);border:1.5px solid var(--b1);cursor:pointer;font-size:11px;font-weight:600;color:var(--t2);transition:all .15s}
+.scan-opt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border-radius:9px;background:var(--bg2);border:1.5px solid var(--b1);cursor:pointer;font-size:11px;font-weight:600;color:var(--t2);min-height:70px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .scan-opt.on{border-color:var(--acc);background:rgba(0,212,255,.06);color:var(--acc)}
-.scan-opt svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
-
-/* CAMERA */
-.cam-wrap{border-radius:10px;overflow:hidden;background:#000;aspect-ratio:4/3;position:relative;margin-bottom:10px;border:1px solid var(--b2)}
-#camVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam-frame{border-radius:9px;overflow:hidden;background:#000;aspect-ratio:4/3;position:relative;display:flex;align-items:center;justify-content:center;border:1px solid var(--b2);margin-bottom:10px}
 .cam-corner{position:absolute;width:24px;height:24px;border:2px solid var(--acc)}
-.cam-beam{position:absolute;left:12px;right:12px;height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent);animation:scanBeam 2.4s ease-in-out infinite;box-shadow:0 0 8px var(--acc)}
-.cam-detected{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,212,255,.9);color:#000;padding:4px 14px;border-radius:20px;font-family:var(--fm);font-size:12px;font-weight:700;white-space:nowrap}
-
-/* TABLE */
+.cam-beam{position:absolute;left:12px;right:12px;height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent);animation:scanBeam 2.4s ease-in-out infinite}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--b1);background:var(--bg2)}
+.tbl th{text-align:left;padding:8px 10px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;border-bottom:1px solid var(--b1);background:var(--bg2)}
 .tbl td{padding:9px 10px;border-bottom:1px solid var(--b1);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:none}
-.tbl-wrap{overflow-x:auto;max-height:320px;overflow-y:auto}
-.tbl-wrap::-webkit-scrollbar{width:3px;height:3px}
-.tbl-wrap::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
-.tc-code{font-family:var(--fm);font-size:11px;color:var(--acc)}
-.sz-tag{display:inline-block;padding:1px 6px;border-radius:3px;background:var(--bg3);border:1px solid var(--b2);font-size:10px;font-weight:700;color:var(--t1);font-family:var(--fm)}
-
-/* STATUS */
-.st-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--fm);border:1px solid}
+.tc-code{font-family:var(--fm);font-size:10px;color:var(--acc)}
+.tc-desc{font-weight:500;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sz-tag{display:inline-block;padding:1px 6px;border-radius:3px;background:var(--bg3);border:1px solid var(--b2);font-size:9px;font-weight:700;color:var(--t1);font-family:var(--fm)}
+.st-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;font-family:var(--fm);border:1px solid}
 .st-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.stat{padding:12px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--b1)}
-.stat-v{font-size:24px;font-weight:800;font-family:var(--fm);line-height:1;margin-bottom:3px}
-.stat-l{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
-
-/* LOG */
-.log{max-height:240px;overflow-y:auto}
-.log::-webkit-scrollbar{width:3px}
-.log::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
-.log-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b1);animation:slideIn .15s ease}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat{padding:12px 14px;border-radius:9px;background:var(--bg2);border:1px solid var(--b1)}
+.stat-v{font-size:22px;font-weight:800;font-family:var(--fm);line-height:1;margin-bottom:2px}
+.stat-l{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase}
+.log{max-height:200px;overflow-y:auto}
+.log-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b1)}
 .log-item:last-child{border-bottom:none}
-.log-ico{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.log-code{font-family:var(--fm);font-size:11px;color:var(--t1)}
-.log-res{font-size:12px;font-weight:500;margin-top:1px}
-.log-time{font-family:var(--fm);font-size:10px;color:var(--t3);flex-shrink:0}
-
-/* EXPORT */
-.export-box{padding:24px 16px;text-align:center;border-radius:10px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12)}
-.btn-export{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:9px;background:#22c55e;color:#000;font-size:14px;font-weight:700;font-family:var(--ff);border:none;cursor:pointer;transition:all .15s;margin-top:0;width:auto}
-.btn-export:active{background:#4ade80}
-
-/* LEGEND */
-.legend-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;margin-bottom:6px;border:1px solid}
-.legend-sw{width:12px;height:12px;border-radius:2px;flex-shrink:0}
-
-/* EDIT INP */
-.edit-inp{background:var(--bg3);border:1px solid var(--b2);border-radius:4px;padding:3px 7px;font-family:var(--fm);font-size:11px;color:var(--t0);width:52px;outline:none}
-.edit-inp:focus{border-color:var(--acc)}
-
-/* TOAST */
-.toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:9999;width:calc(100% - 32px);max-width:360px}
-.toast{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:9px;background:var(--bg2);border:1px solid var(--b2);box-shadow:0 4px 20px rgba(0,0,0,.5);font-size:13px;font-weight:500;animation:pop .22s ease}
+.log-ico{width:26px;height:26px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.edit-inp{background:var(--bg3);border:1px solid var(--b2);border-radius:4px;padding:3px 6px;font-family:var(--fm);font-size:11px;color:var(--t0);width:50px;outline:none}
+.sheets-card{padding:24px 16px;text-align:center;border-radius:10px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12)}
+.btn-export{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;background:#22c55e;color:#000;font-size:14px;font-weight:700;font-family:var(--ff);border:none;cursor:pointer;touch-action:manipulation}
+.nav-bottom{display:flex;justify-content:space-between;gap:10px;padding-top:14px;margin-top:6px;border-top:1px solid var(--b1)}
+.nav-bottom .btn{flex:1}
+.toasts{position:fixed;bottom:20px;right:12px;display:flex;flex-direction:column;gap:7px;z-index:9999;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;min-width:200px;max-width:280px;background:var(--bg2);border:1px solid var(--b2);box-shadow:0 4px 16px rgba(0,0,0,.6);font-size:12px;font-weight:500;animation:toastIn .2s ease}
 .toast-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-
-/* MISC */
 .div{height:1px;background:var(--b1);margin:12px 0}
-.empty{padding:28px;text-align:center;color:var(--t3);font-size:13px}
-.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;font-family:var(--fm)}
-.srch{margin-bottom:10px}
-.nav-bottom{display:flex;justify-content:space-between;padding-top:14px;margin-top:4px;border-top:1px solid var(--b1)}
-.ocr-step{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:8px}
-.ocr-step-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;border:1px solid}
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:var(--fm)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.legend-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;margin-bottom:5px;border:1px solid}
+.legend-swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.fmt-row{display:flex;gap:5px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.fmt{padding:2px 8px;border-radius:4px;background:var(--bg3);border:1px solid var(--b2);font-size:10px;color:var(--t2);font-family:var(--fm)}
 </style>
 </head>
 <body>
-
 <header class="topbar">
   <div class="logo">
     <div class="logo-icon">IT</div>
     <div class="logo-text">InvenTrack <span>Pro</span></div>
   </div>
-  <div style="font-size:11px;color:var(--t3);font-family:var(--fm)" id="sessionInfo">Sesión activa</div>
+  <div id="ctr" style="font-size:11px;color:var(--t3);font-family:var(--fm)"></div>
 </header>
-
-<div class="stepbar" id="stepbar"></div>
-
-<main class="main" id="main"></main>
-
+<div class="stepbar" id="sb"></div>
+<main class="main" id="mc"></main>
 <div class="toasts" id="toasts"></div>
 
 <script>
-const DEMO = [
+// ═══ STATE ═══
+const DI=[
   {id:"I01",code:"01BOLSA",desc:"Bolsa",size:"–",qty:3},
   {id:"I02",code:"LC260090",desc:"Blusa",size:"–",qty:3},
   {id:"I03",code:"LC260092",desc:"Pantalón",size:"–",qty:3},
@@ -184,554 +122,389 @@ const DEMO = [
   {id:"I18",code:"Y0161",desc:"Pantalón",size:"–",qty:4},
   {id:"I19",code:"Y0164",desc:"Vestido",size:"–",qty:3},
 ];
-
-const STATUS = {
+const ST={
   green:{label:"Coincide exacto",color:"#22c55e",bg:"rgba(34,197,94,.12)",border:"rgba(34,197,94,.35)"},
-  yellow:{label:"Cantidad diferente",color:"#f59e0b",bg:"rgba(245,158,11,.12)",border:"rgba(245,158,11,.35)"},
+  yellow:{label:"Cant. diferente",color:"#f59e0b",bg:"rgba(245,158,11,.12)",border:"rgba(245,158,11,.35)"},
   red:{label:"Sin escanear",color:"#ef4444",bg:"rgba(239,68,68,.12)",border:"rgba(239,68,68,.35)"},
   black:{label:"Fuera de factura",color:"#94a3b8",bg:"rgba(148,163,184,.08)",border:"rgba(148,163,184,.2)"},
 };
+let S={step:0,inv:DI.map(x=>({...x})),scans:[],log:[],mode:"manual",stream:null,camOn:false,fq:""};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const nt=()=>new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+function gst(iq,sc,inInv){if(!inInv)return"black";if(sc===0)return"red";if(sc===iq)return"green";return"yellow";}
 
-let state = {
-  step: 0,
-  invoice: JSON.parse(JSON.stringify(DEMO)),
-  scanData: [],
-  log: [],
-  scanMode: "manual",
-  camStream: null,
-  filterQ: "",
-};
+// ═══ PARSER OCR ═══
+const HW=new Set(["REFERENC","REFERENCIA","REF","DESCRIPCIÓN","DESCRIPCION","CANTIDAD","CTOTAL","C.TOTAL","PRECIO","TOTAL","SUBTOTAL","FACTURA","FECHA","NIF","CIF","IVA","DESCUENTO","NOTA","PAGINA","PÁGINA","VISA","GRACIAS","EMAIL","TEL","FAX","SPAIN","ESPAÑA","SCANNED","WITH","CAMSCANNER","IMPORTE","BASE","ARTICULO","ARTÍCULO","UNIDADES","UNID","UDS","PVP","EUR","USD","NOMBRE","CLIENTE","PROVEEDOR","DIRECCION","CALLE","CP","CIUDAD","NUMERO","PEDIDO","ORDER"]);
+function parseOCR(text){const lines=text.split("\n").map(l=>l.trim()).filter(l=>l.length>1);const res=[];const seen=new Set();for(const line of lines){if(isHdr(line))continue;const e=exLine(line);if(!e||seen.has(e.code))continue;seen.add(e.code);res.push({id:"I"+String(res.length+1).padStart(3,"0"),code:e.code,desc:e.desc,size:e.size,qty:e.qty});}return res;}
+function isHdr(l){const up=l.toUpperCase().replace(/[^A-Z0-9\s]/g," ");const ws=up.split(/\s+/).filter(Boolean);if(ws.filter(w=>HW.has(w)).length>=2)return true;if(/TOTAL|SUBTOTAL|BASE IMPONIBLE|SIN IVA|IVA\s+\d/i.test(l))return true;if(/^(calle|c\/|av\.|tel|email|www\.|nif|cif|es\d{9})/i.test(l))return true;return false;}
+function exLine(line){const c=line.replace(/[""''`]/g,"").trim();const m=c.match(/^([A-Z0-9][A-Z0-9\-\.\/]{1,19})\s{1,4}(.{2,})/i);if(m){const code=m[1].toUpperCase();const rest=m[2];if(!HW.has(code)&&isVC(code)){const q=exQ(rest);if(q!==null&&q>0)return{code,desc:clnD(rest,q)||"Artículo",size:exSz(c),qty:q};}}const n=c.match(/^(\d{4,13})\s+(.{3,})/);if(n){const q=exQ(n[2]);if(q!==null&&q>0)return{code:n[1],desc:clnD(n[2],q)||"Artículo",size:exSz(c),qty:q};}return null;}
+function isVC(c){if(c.length<2||c.length>20)return false;if(HW.has(c))return false;if(/^[A-ZÁÉÍÓÚÑ]+$/.test(c)&&c.length>4)return false;if(!/\d/.test(c)&&c.length>5)return false;return true;}
+function exQ(s){const m=s.match(/\b(\d{1,4})\s*[xX×]\s*\d+/);if(m)return parseInt(m[1]);const ns=[...s.matchAll(/\b(\d{1,4})\b(?!\s*[,\.]\s*\d{2})/g)];for(const x of ns){const n=parseInt(x[1]);if(n>=1&&n<=999)return n;}return null;}
+function exSz(s){const t=s.match(/\b(XXL|XXXL|XL|XS|[SML])\b/);if(t)return t[1].toUpperCase();const n=s.match(/\b(4[0-8]|3[4-9]|2[8-9]|30|32)\b/);if(n)return n[1];return"–";}
+function clnD(raw,qty){let d=raw.replace(/\b\d+\s*[xX×]\s*\d+\b/g,"").replace(/\d{1,3}(?:[.,]\d{3})*[.,]\d{2}\s*[€$£]?/g,"").replace(/[€$£%|]/g,"").replace(new RegExp("\\b"+qty+"\\b","g"),"").replace(/\b\d{1,6}\b/g,"").replace(/\s{2,}/g," ").trim();const dp=d.match(/^.+?\s+([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]{3,})$/);if(dp){const u=dp[1].trim();d=u[0].toUpperCase()+u.slice(1).toLowerCase();}if(d&&d[0])d=d[0].toUpperCase()+d.slice(1);return d.length>=2?d:"";}
 
-const uid = () => Math.random().toString(36).slice(2,8);
-const nowT = () => new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+// ═══ PDF / OCR ═══
+function ldSc(src){return new Promise((res,rej)=>{if(document.querySelector('script[src="'+src+'"]')){res();return;}const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+async function exText(file){if(file.type==="application/pdf"||file.name.endsWith(".pdf")){if(!window.pdfjsLib){await ldSc("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}const buf=await file.arrayBuffer();const pdf=await window.pdfjsLib.getDocument({data:buf}).promise;let text="";for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p);const content=await page.getTextContent();const lm={};for(const item of content.items){const y=Math.round(item.transform[5]/3)*3;if(!lm[y])lm[y]=[];lm[y].push({x:item.transform[4],str:item.str});}const ys=Object.keys(lm).map(Number).sort((a,b)=>b-a);for(const y of ys){const sorted=lm[y].sort((a,b)=>a.x-b.x);const lt=sorted.map(i=>i.str).join("  ");if(lt.trim())text+=lt+"\n";}text+="\n";}return text;}else{if(!window.Tesseract)await ldSc("https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js");const{data:{text}}=await window.Tesseract.recognize(file,"spa+eng");return text;}}
 
-function getStatus(iqty, scanned, inInvoice) {
-  if (!inInvoice) return "black";
-  if (scanned === 0) return "red";
-  if (scanned === iqty) return "green";
-  return "yellow";
+// ═══ TOAST ═══
+function toast(msg,type){const cols={success:"#22c55e",error:"#ef4444",warning:"#f59e0b",info:"#00d4ff"};const el=document.createElement("div");el.className="toast";el.innerHTML='<div class="toast-dot" style="background:'+(cols[type]||cols.info)+'"></div><span>'+msg+'</span>';document.getElementById("toasts").appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+// ═══ RENDER ═══
+function render(){rSB();rStep();rCtr();}
+function rCtr(){const t=S.scans.reduce((a,b)=>a+b.scanned,0);document.getElementById("ctr").textContent=t>0?t+" escaneadas":"";}
+function rSB(){const steps=["Factura","Escanear","Revisar","Exportar"];document.getElementById("sb").innerHTML=steps.map((s,i)=>'<div class="step '+(S.step===i?"active":"")+(S.step>i?" done":"")+(S.step>i?' onclick="navTo('+i+')"':"")+'" ><div class="step-n">'+(S.step>i?"✓":i+1)+'</div><span class="step-lbl">'+s+'</span></div>').join("");}
+
+// ═══ NAVIGATION — central, no inline state mutation in HTML ═══
+function navTo(n){
+  stopCam();
+  S.step=n;
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function toast(msg, type="success") {
-  const cols = {success:"#22c55e",error:"#ef4444",warning:"#f59e0b",info:"#00d4ff"};
-  const el = document.createElement("div");
-  el.className = "toast";
-  el.innerHTML = `<div class="toast-dot" style="background:${cols[type]||cols.info}"></div><span>${msg}</span>`;
-  const wrap = document.getElementById("toasts");
-  wrap.appendChild(el);
-  setTimeout(() => el.remove(), 3200);
+function rStep(){
+  const c=document.getElementById("mc");
+  if(S.step===0)c.innerHTML=rS1();
+  else if(S.step===1)c.innerHTML=rS2();
+  else if(S.step===2)c.innerHTML=rS3();
+  else c.innerHTML=rS4();
+  bindEv();
 }
 
-// ── PARSER OCR UNIVERSAL ──
-const SKIP = new Set(["REFERENC","REFERENCIA","DESCRIPCIÓN","DESCRIPCION","CANTIDAD","CTOTAL","C.TOTAL","PRECIO","TOTAL","SUBTOTAL","FACTURA","FECHA","NIF","CIF","IVA","DESCUENTO","NOTA","PAGINA","PÁGINA","VISA","GRACIAS","EMAIL","TEL","FAX","SPAIN","ESPAÑA","SCANNED","WITH","IMPORTE","BASE","UNIDADES","UNID","UDS","PVP","EUR","USD","NUMERO","NÚMERO","PEDIDO","ALBARAN","ALBARÁN"]);
-
-function parseOCR(text) {
-  const lines = text.split("\n").map(l=>l.trim()).filter(l=>l.length>1);
-  const results = []; const seen = new Set();
-  for (const line of lines) {
-    if (/TOTAL|SUBTOTAL|BASE IMPONIBLE|SIN IVA|IVA\s*\d|PAGINA|PÁGINA/i.test(line)) continue;
-    if (/^(calle|c\/|av\.|avda|tel[eé]f|email|www\.|http|nif|cif)/i.test(line)) continue;
-    const m = line.match(/^([A-Z0-9][A-Z0-9\-\.\/]{1,19})\s{1,4}(.{2,})/i);
-    if (!m) continue;
-    const code = m[1].toUpperCase(); const rest = m[2];
-    if (SKIP.has(code)) continue;
-    if (code.length < 2 || code.length > 20) continue;
-    if (/^[A-ZÁÉÍÓÚÑ]+$/.test(code) && code.length > 4) continue;
-    if (seen.has(code)) continue;
-    const qm = rest.match(/(\d+)\s*[xX×]\s*\d+/) || rest.match(/\b(\d{1,4})\b(?!\s*[,\.]\s*\d{2})/);
-    const qty = qm ? parseInt(qm[1]) : 1;
-    if (qty <= 0 || qty > 999) continue;
-    let desc = rest.replace(/\d+\s*[xX×]\s*\d+/g,"").replace(/\d+[,\.]\d{2}\s*[€$£]?/g,"").replace(/\b\d{1,4}\b/g,"").replace(/[€$£]/g,"").trim();
-    const dup = desc.match(/^.+?\s+([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]{3,})$/);
-    if (dup) { const u=dup[1].trim(); desc=u[0]+u.slice(1).toLowerCase(); }
-    desc = desc.replace(/\s{2,}/g," ").trim() || "Artículo";
-    seen.add(code);
-    results.push({id:`I${String(results.length+1).padStart(3,"0")}`,code,desc,size:"–",qty});
-  }
-  return results;
+// ═══ STEP 1 ═══
+function rS1(){
+  const items=S.inv;
+  const fq=S.fq.toLowerCase();
+  const filtered=items.filter(it=>!fq||it.code.toLowerCase().includes(fq)||it.desc.toLowerCase().includes(fq));
+  return '<div class="card"><div class="card-head"><span class="card-title">📄 Subir Factura</span><span class="pill" style="background:rgba(0,212,255,.1);color:var(--acc);border:1px solid rgba(0,212,255,.2)">OCR IA</span></div><div class="card-body">'
+    +'<div class="drop-zone" onclick="document.getElementById(\'fi\').click()">'
+    +'<input type="file" id="fi" accept=".pdf,image/*" style="display:none" onchange="handleFile(this.files[0])">'
+    +'<div style="font-size:36px;margin-bottom:10px">📄</div>'
+    +'<div style="font-size:15px;font-weight:600;margin-bottom:5px">Toca para subir factura</div>'
+    +'<div style="font-size:12px;color:var(--t2);font-family:var(--fm)">PDF, JPG, PNG</div>'
+    +'<div class="fmt-row"><span class="fmt">PDF</span><span class="fmt">JPG</span><span class="fmt">PNG</span></div></div>'
+    +'<div class="div"></div>'
+    +'<button class="btn btn-ghost btn-full" onclick="loadDemo()" style="margin-bottom:12px">📋 Cargar factura de ejemplo (19 artículos)</button>'
+    +(items.length>0
+      ? '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between"><span>Productos detectados</span><span style="color:var(--acc);font-family:var(--fm)">'+items.length+' artículos</span></div>'
+        +'<input class="inp" placeholder="🔍 Buscar..." id="fqi" value="'+S.fq+'" oninput="S.fq=this.value;rStep()" style="margin-bottom:8px;font-size:14px">'
+        +'<div class="tbl-wrap" style="max-height:260px;overflow-y:auto"><table class="tbl"><thead><tr><th>#</th><th>Código</th><th>Descripción</th><th>Cant.</th></tr></thead><tbody>'
+        +filtered.map((it,i)=>'<tr><td style="color:var(--t3);font-family:var(--fm);font-size:10px">'+String(i+1).padStart(2,"0")+'</td><td class="tc-code">'+it.code+'</td><td class="tc-desc">'+it.desc+' <span class="sz-tag">'+it.size+'</span></td><td><input class="edit-inp" value="'+it.qty+'" onchange="editQty(\''+it.id+'\',this.value)" style="width:44px"></td></tr>').join("")
+        +'</tbody></table></div>'
+        +'<button class="btn btn-ghost btn-full" onclick="addItem()" style="margin-top:8px;font-size:12px">+ Añadir artículo</button>'
+        +'<div class="div"></div>'
+        +'<button class="btn btn-prime btn-full" onclick="confInv()">Confirmar factura ›</button>'
+      : '')
+    +'</div></div><div id="ocrp"></div>';
 }
 
-async function loadPDFJS() {
-  if (window.pdfjsLib) return;
-  await new Promise((res,rej)=>{
-    const s=document.createElement("script");
-    s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
-    s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";res()};
-    s.onerror=rej;document.head.appendChild(s);
-  });
+function handleFile(file){
+  if(!file)return;
+  const p=document.getElementById("ocrp");
+  p.innerHTML='<div class="card"><div class="card-body"><div style="display:flex;align-items:center;gap:9px;margin-bottom:12px"><div style="animation:spin 1s linear infinite;font-size:18px">⟳</div><div><div style="font-size:13px;font-weight:600">Procesando OCR...</div><div style="font-size:10px;color:var(--t3);font-family:var(--fm)">'+file.name+'</div></div></div><div class="prog-wrap"><div class="prog-bar" id="pb" style="width:0%"></div></div><div style="font-size:10px;color:var(--t3);font-family:var(--fm)" id="pl">Cargando...</div></div></div>';
+  [[300,20,"Cargando..."],[700,50,"Leyendo texto..."],[1200,80,"Extrayendo productos..."]].forEach(function(x){setTimeout(function(){const pb=document.getElementById("pb"),pl=document.getElementById("pl");if(pb)pb.style.width=x[1]+"%";if(pl)pl.textContent=x[2];},x[0]);});
+  exText(file).then(function(text){const parsed=parseOCR(text);if(parsed.length>0){S.inv=parsed;toast("✓ "+parsed.length+" artículos detectados","success");}else toast("No se detectaron artículos — verifica el archivo","warning");p.innerHTML="";render();}).catch(function(){p.innerHTML="";toast("Error leyendo el archivo","error");});
 }
+function loadDemo(){S.inv=DI.map(function(x){return Object.assign({},x);});render();toast("Factura demo — 19 artículos","success");}
+function editQty(id,val){const n=parseInt(val);if(!isNaN(n)&&n>=0)S.inv=S.inv.map(function(i){return i.id===id?Object.assign({},i,{qty:n}):i;});}
+function addItem(){const n=S.inv.length+1;S.inv.push({id:"I"+String(n).padStart(3,"0"),code:"REF-"+n,desc:"Nuevo artículo",size:"–",qty:1});render();toast("Artículo añadido","info");}
+function confInv(){if(S.inv.length===0){toast("Añade artículos primero","error");return;}navTo(1);toast(S.inv.length+" artículos confirmados","success");}
 
-async function extractText(file) {
-  if (file.type==="application/pdf"||file.name.endsWith(".pdf")) {
-    await loadPDFJS();
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data:buf}).promise;
-    let txt="";
-    for (let p=1;p<=pdf.numPages;p++) {
-      const page=await pdf.getPage(p);
-      const c=await page.getTextContent();
-      const map={};
-      for (const i of c.items){const y=Math.round(i.transform[5]/3)*3;if(!map[y])map[y]=[];map[y].push({x:i.transform[4],s:i.str});}
-      Object.keys(map).map(Number).sort((a,b)=>b-a).forEach(y=>{txt+=map[y].sort((a,b)=>a.x-b.x).map(i=>i.s).join("  ")+"\n";});
+// ═══ STEP 2 ═══
+function rS2(){
+  const rows=S.inv.map(function(inv){const sc=S.scans.find(function(s){return s.code===inv.code;});return Object.assign({},inv,{invoiceQty:inv.qty,scanned:sc?sc.scanned:0});});
+  const extras=S.scans.filter(function(s){return!s.inInvoice;});
+  const total=S.scans.reduce(function(a,b){return a+b.scanned;},0);
+  const exact=rows.filter(function(r){return r.scanned===r.invoiceQty;}).length;
+  const pending=rows.filter(function(r){return r.scanned<r.invoiceQty;}).length;
+
+  let html='<div class="stats-row">'
+    +'<div class="stat"><div class="stat-v" style="color:var(--acc)">'+total+'</div><div class="stat-l">Escaneadas</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:#22c55e">'+exact+'</div><div class="stat-l">Exactas</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:#f59e0b">'+pending+'</div><div class="stat-l">Pendientes</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:#94a3b8">'+extras.length+'</div><div class="stat-l">Fuera factura</div></div>'
+    +'</div>';
+
+  html+='<div class="card"><div class="card-head"><span class="card-title">📷 Modo de escaneo</span></div><div class="card-body">'
+    +'<div class="scan-opts">'
+    +'<div class="scan-opt '+(S.mode==="camera"?"on":"")+'\" onclick="setSM(\'camera\')"><span style="font-size:22px">📷</span><span>Cámara</span></div>'
+    +'<div class="scan-opt '+(S.mode==="barcode"?"on":"")+'\" onclick="setSM(\'barcode\')"><span style="font-size:22px">🔌</span><span>Lector USB</span></div>'
+    +'<div class="scan-opt '+(S.mode==="manual"?"on":"")+'\" onclick="setSM(\'manual\')"><span style="font-size:22px">⌨️</span><span>Manual</span></div>'
+    +'</div>';
+
+  if(S.mode==="camera"){
+    if(S.camOn){
+      html+='<div class="cam-frame">'
+        +'<video id="cv" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>'
+        +'<canvas id="cc" style="display:none"></canvas>'
+        +'<div class="cam-corner" style="top:10px;left:10px;border-right:none;border-bottom:none;border-radius:3px 0 0 0"></div>'
+        +'<div class="cam-corner" style="top:10px;right:10px;border-left:none;border-bottom:none;border-radius:0 3px 0 0"></div>'
+        +'<div class="cam-corner" style="bottom:10px;left:10px;border-right:none;border-top:none;border-radius:0 0 0 3px"></div>'
+        +'<div class="cam-corner" style="bottom:10px;right:10px;border-left:none;border-top:none;border-radius:0 0 3px 0"></div>'
+        +'<div class="cam-beam"></div>'
+        +'<div id="cr" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:none;background:rgba(0,212,255,.9);color:#000;padding:3px 12px;border-radius:20px;font-family:var(--fm);font-size:11px;font-weight:700;z-index:10"></div>'
+        +'</div>'
+        +'<div style="display:flex;gap:8px;margin-bottom:10px">'
+        +'<button class="btn btn-ghost" style="flex:1;font-size:12px" onclick="swCam()">🔄 Rotar</button>'
+        +'<button class="btn btn-ghost" style="flex:1;font-size:12px;color:#f87171" onclick="stopCam();S.camOn=false;setSM(\'manual\')">✕ Cerrar</button>'
+        +'</div>';
+    } else {
+      html+='<div style="padding:20px;text-align:center;border-radius:9px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:12px">'
+        +'<div style="font-size:36px;margin-bottom:8px">📷</div>'
+        +'<div style="font-size:14px;font-weight:600;margin-bottom:6px">Activar cámara</div>'
+        +'<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.5">Necesitas dar permiso de cámara.<br>Detecta códigos de barras automáticamente.</div>'
+        +'<button class="btn btn-prime" onclick="startCam()" style="margin:0 auto">📷 Iniciar cámara</button>'
+        +'</div>';
     }
-    return txt;
+  } else if(S.mode==="barcode"){
+    html+='<div style="padding:12px 14px;border-radius:8px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:12px">'
+      +'<div style="font-size:13px;font-weight:600;margin-bottom:4px">🔌 Lector USB/Bluetooth</div>'
+      +'<div style="font-size:12px;color:var(--t2)">Conecta el lector. Al escanear escribirá el código en el campo y se registrará solo.</div>'
+      +'</div>';
   }
-  if (!window.Tesseract) {
-    await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-  }
-  const {data:{text}} = await Tesseract.recognize(file,"spa+eng");
-  return text;
-}
 
-// ── CAMERA ──
-let camStream=null, rafId=null, lastDetected="", zxingReader=null;
+  html+='<div class="inp-row">'
+    +'<input class="inp" id="si" placeholder="Código — Enter para registrar" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">'
+    +'<input class="inp inp-sm" id="sz" placeholder="Talla" autocomplete="off">'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:16px">'
+    +'<button class="btn btn-prime" style="flex:1" onclick="doScan()">📥 Registrar</button>'
+    +'<button class="btn btn-ghost" onclick="demoSc()">▶ Demo</button>'
+    +'</div>'
+    +'<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:8px">Registro en tiempo real</div>'
+    +'<div class="log" id="sl">';
 
-async function startCamera() {
-  stopCamera();
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});
-    camStream=stream;
-    const v=document.getElementById("camVideo");
-    if(v){v.srcObject=stream;await v.play();}
-    document.getElementById("camStatus").textContent="🟢 Cámara activa";
-    startZXing();
-  } catch(e) {
-    let msg="Error al acceder a la cámara";
-    if(e.name==="NotAllowedError") msg="Permiso denegado. Actívalo en ajustes del navegador.";
-    else if(e.name==="NotFoundError") msg="No se encontró cámara en este dispositivo.";
-    document.getElementById("camStatus").textContent="❌ "+msg;
-  }
-}
-
-function stopCamera() {
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
-  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
-}
-
-async function startZXing() {
-  if(!window.ZXingBrowser&&!window.ZXing) {
-    const s=document.createElement("script");
-    s.src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.min.js";
-    s.onload=()=>decodeLoop();
-    document.head.appendChild(s);
-  } else { decodeLoop(); }
-}
-
-function decodeLoop() {
-  const v=document.getElementById("camVideo");
-  const c=document.getElementById("camCanvas");
-  if(!v||!c){return;}
-  const ZX=window.ZXingBrowser||window.ZXing;
-  if(ZX&&ZX.BrowserMultiFormatReader&&!zxingReader){
-    try{zxingReader=new ZX.BrowserMultiFormatReader();}catch(e){}
-  }
-  const loop=()=>{
-    if(!camStream){return;}
-    try{
-      if(v.readyState>=2){
-        c.width=v.videoWidth;c.height=v.videoHeight;
-        const ctx=c.getContext("2d");ctx.drawImage(v,0,0);
-        if(zxingReader&&zxingReader.decodeFromCanvas){
-          zxingReader.decodeFromCanvas(c).then(r=>{
-            if(r&&r.text&&r.text!==lastDetected){
-              lastDetected=r.text;
-              const det=document.getElementById("camDetected");
-              if(det){det.textContent="✓ "+r.text;det.style.display="block";}
-              processScan(r.text,"");
-              setTimeout(()=>{lastDetected="";},2000);
-            }
-          }).catch(()=>{});
-        }
-      }
-    }catch(e){}
-    rafId=requestAnimationFrame(loop);
-  };
-  rafId=requestAnimationFrame(loop);
-}
-
-function processScan(code, size) {
-  const cleaned = code.trim().toUpperCase();
-  if(!cleaned) return;
-  const match = state.invoice.find(inv=>
-    inv.code===cleaned||
-    inv.code.replace(/-/g,"")===cleaned.replace(/-/g,"")||
-    cleaned.includes(inv.code.slice(0,8))
-  );
-  const entry={id:uid(),code:cleaned,size:size||"–",time:nowT(),found:!!match,desc:match?.desc||"No en factura"};
-  state.log.unshift(entry);
-  if(state.log.length>60) state.log.pop();
-  if(match){
-    const ex=state.scanData.find(x=>x.code===match.code);
-    if(ex){ex.scanned++;}
-    else{state.scanData.push({id:match.id,code:match.code,desc:match.desc,size:match.size,invoiceQty:match.qty,scanned:1,inInvoice:true});}
-    toast(`✓ ${match.desc} registrado`,"success");
+  if(S.log.length===0){
+    html+='<div style="padding:20px;text-align:center;color:var(--t3);font-size:13px">📦 Escanea tu primera prenda<br><span style="font-size:11px">o toca ▶ Demo para probar</span></div>';
   } else {
-    const ex=state.scanData.find(x=>x.code===cleaned&&!x.inInvoice);
-    if(ex){ex.scanned++;}
-    else{state.scanData.push({id:uid(),code:cleaned,desc:"Desconocido",size:size||"?",invoiceQty:0,scanned:1,inInvoice:false});}
-    toast(`⚠ Fuera de factura: ${cleaned}`,"warning");
+    S.log.slice(0,20).forEach(function(e){
+      html+='<div class="log-item">'
+        +'<div class="log-ico" style="background:'+(e.found?"rgba(34,197,94,.1)":"rgba(245,158,11,.1)")+';border:1px solid '+(e.found?"rgba(34,197,94,.25)":"rgba(245,158,11,.25)")+';color:'+(e.found?"#4ade80":"#f59e0b")+'">'+(e.found?"✓":"⚠")+'</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-family:var(--fm);font-size:10px;color:var(--t1)">'+e.code+' <span class="sz-tag" style="font-size:8px">'+e.size+'</span></div>'
+        +'<div style="font-size:12px;font-weight:500;color:'+(e.found?"var(--t0)":"#f59e0b")+'">'+e.desc+'</div>'
+        +'</div>'
+        +'<div style="font-family:var(--fm);font-size:9px;color:var(--t3)">'+e.time+'</div>'
+        +'</div>';
+    });
   }
-  if(state.step===1) renderStep();
+  html+='</div></div></div>';
+
+  // tabla estado
+  html+='<div class="card"><div class="card-head"><span class="card-title">📋 Estado por SKU</span></div><div class="tbl-wrap"><table class="tbl">'
+    +'<thead><tr><th>Código</th><th>Desc.</th><th>Talla</th><th>Fact.</th><th>Esc.</th><th>Estado</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    const s=gst(r.invoiceQty,r.scanned,true);
+    const cfg=ST[s];
+    html+='<tr><td class="tc-code">'+r.code+'</td><td class="tc-desc">'+r.desc+'</td><td><span class="sz-tag">'+r.size+'</span></td>'
+      +'<td style="font-family:var(--fm);font-weight:600">'+r.invoiceQty+'</td>'
+      +'<td style="font-family:var(--fm);font-weight:600;color:'+(r.scanned===r.invoiceQty?"#4ade80":r.scanned>0?"#f59e0b":"var(--t3)")+'">'+r.scanned+'</td>'
+      +'<td><span class="st-badge" style="background:'+cfg.bg+';border-color:'+cfg.border+';color:'+cfg.color+'"><span class="st-dot" style="background:'+cfg.color+'"></span>'+cfg.label+'</span></td></tr>';
+  });
+  extras.forEach(function(r){
+    html+='<tr><td class="tc-code">'+r.code+'</td><td class="tc-desc" style="color:var(--t2)">'+r.desc+'</td><td><span class="sz-tag">'+r.size+'</span></td><td style="color:var(--t3)">—</td><td style="font-family:var(--fm);font-weight:600;color:#94a3b8">'+r.scanned+'</td><td><span class="st-badge" style="background:'+ST.black.bg+';border-color:'+ST.black.border+';color:#94a3b8"><span class="st-dot" style="background:#94a3b8"></span>Fuera factura</span></td></tr>';
+  });
+  html+='</tbody></table></div></div>';
+
+  html+='<div class="nav-bottom">'
+    +'<button class="btn btn-ghost" onclick="navTo(0)">← Anterior</button>'
+    +'<button class="btn btn-prime" onclick="navTo(2)">Revisar ›</button>'
+    +'</div>';
+  return html;
 }
 
-// ── RENDER ──
-function renderStepBar() {
-  const steps=["Factura","Escanear","Revisar","Exportar"];
-  document.getElementById("stepbar").innerHTML=steps.map((s,i)=>`
-    <button class="step-btn ${state.step===i?"active":""} ${state.step>i?"done":""}" onclick="goStep(${i})">
-      <span class="step-n">${state.step>i?"✓":i+1}</span>
-      ${s}
-    </button>
-  `).join("");
+// ═══ STEP 3 ═══
+function rS3(){
+  const rows=S.inv.map(function(inv){const sc=S.scans.find(function(s){return s.code===inv.code;});return Object.assign({},inv,{iqty:inv.qty,scanned:sc?sc.scanned:0});});
+  const extras=S.scans.filter(function(s){return!s.inInvoice;});
+  const gr={green:rows.filter(function(r){return r.scanned===r.iqty&&r.scanned>0;}),yellow:rows.filter(function(r){return r.scanned>0&&r.scanned!==r.iqty;}),red:rows.filter(function(r){return r.scanned===0;}),black:extras};
+  const acc=rows.length?Math.round((gr.green.length/rows.length)*100):0;
+  let html='<div class="stats-row">'
+    +'<div class="stat"><div class="stat-v" style="color:'+(acc>85?"#22c55e":acc>60?"#f59e0b":"#ef4444")+'">'+acc+'%</div><div class="stat-l">Precisión</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:var(--acc)">'+rows.reduce(function(a,r){return a+r.iqty;},0)+'</div><div class="stat-l">Facturadas</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:var(--t0)">'+rows.reduce(function(a,r){return a+r.scanned;},0)+'</div><div class="stat-l">Escaneadas</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:#ef4444">'+gr.red.length+'</div><div class="stat-l">Pendientes</div></div>'
+    +'</div>';
+  Object.entries(gr).forEach(function(entry){
+    const s=entry[0],grp=entry[1];
+    if(!grp.length)return;
+    const cfg=ST[s];
+    html+='<div class="card" style="border-color:'+cfg.border+'"><div class="card-head" style="background:'+cfg.bg+'">'
+      +'<div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:'+cfg.color+'"></div><span class="card-title" style="color:'+cfg.color+'">'+cfg.label+'</span></div>'
+      +'<span class="pill" style="background:'+cfg.bg+';color:'+cfg.color+';border:1px solid '+cfg.border+'">'+grp.length+' SKUs</span>'
+      +'</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Código</th><th>Desc.</th><th>Talla</th><th>Fact.</th><th>Esc.</th><th>Dif.</th></tr></thead><tbody>';
+    grp.forEach(function(r){
+      const diff=r.scanned-(r.iqty||0);
+      html+='<tr><td class="tc-code">'+r.code+'</td><td class="tc-desc">'+r.desc+'</td><td><span class="sz-tag">'+r.size+'</span></td>'
+        +'<td style="font-family:var(--fm);font-weight:600">'+(r.iqty!=null?r.iqty:"—")+'</td>'
+        +'<td style="font-family:var(--fm);font-weight:600;color:'+(s==="green"?"#4ade80":"var(--t0)")+'">'+r.scanned+'</td>'
+        +'<td style="font-family:var(--fm);font-size:11px;color:'+(diff===0?"var(--t3)":diff>0?"#22c55e":"#ef4444")+'">'+(diff===0?"—":diff>0?"+"+diff:diff)+'</td></tr>';
+    });
+    html+='</tbody></table></div></div>';
+  });
+  html+='<div class="nav-bottom"><button class="btn btn-ghost" onclick="navTo(1)">← Anterior</button><button class="btn btn-prime" onclick="navTo(3)">Exportar ›</button></div>';
+  return html;
 }
 
-function goStep(i){if(i<=state.step||i===state.step){state.step=i;if(i!==1)stopCamera();renderAll();}}
-
-function renderAll(){renderStepBar();renderStep();}
-
-function renderStep(){
-  const m=document.getElementById("main");
-  if(state.step===0) m.innerHTML=renderStep1();
-  else if(state.step===1) m.innerHTML=renderStep2();
-  else if(state.step===2) m.innerHTML=renderStep3();
-  else m.innerHTML=renderStep4();
-  bindStep();
-}
-
-// STEP 1
-function renderStep1(){
-  return `
-  <div class="card">
-    <div class="card-head"><span class="card-title">📄 Subir Factura</span><span class="pill" style="background:rgba(0,212,255,.1);color:var(--acc);border:1px solid rgba(0,212,255,.2)">OCR IA</span></div>
-    <div class="card-body">
-      <div class="drop-zone" id="dropZone">
-        <div class="drop-icon">📄</div>
-        <div class="drop-t1">Toca para subir factura</div>
-        <div class="drop-t2">PDF · JPG · PNG</div>
-        <input type="file" id="fileInp" accept=".pdf,image/*" style="display:none">
-      </div>
-      <button class="btn btn-ghost" id="demoBtn">📋 Usar factura de ejemplo (19 artículos)</button>
-      <div id="ocrArea"></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-head"><span class="card-title">Motor OCR</span></div>
-    <div class="card-body">
-      ${[["📊","PDF multi-página, JPG, PNG, WEBP"],["🔢","Códigos: LC260090, Y0154, 01BOLSA, etc."],["📦","Cantidades formato 3×1"],["👕","Tallas XS-XXL y numéricas"]].map(([i,t])=>`<div style="display:flex;gap:10px;margin-bottom:10px"><span style="font-size:16px">${i}</span><span style="font-size:12px;color:var(--t1)">${t}</span></div>`).join("")}
-    </div>
-  </div>`;
-}
-
-function showOCRProgress(fileName) {
-  const el=document.getElementById("ocrArea");
-  if(!el)return;
-  el.innerHTML=`
-    <div style="padding:14px 0;animation:fadeUp .3s ease">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-opacity=".2"/><path d="M21 12a9 9 0 00-9-9"/></svg>
-        <span style="font-size:13px;font-weight:600">Procesando OCR...</span>
-      </div>
-      <div style="font-size:11px;color:var(--t3);font-family:var(--fm);margin-bottom:8px">${fileName}</div>
-      <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
-      <div style="font-size:11px;color:var(--t3);font-family:var(--fm)" id="progLbl">Iniciando...</div>
-    </div>`;
-  const steps=[[200,20,"Cargando documento..."],[500,45,"Extrayendo texto..."],[900,70,"Detectando referencias..."],[1300,90,"Validando artículos..."]];
-  steps.forEach(([d,p,l])=>setTimeout(()=>{
-    const pb=document.getElementById("progBar"),pl=document.getElementById("progLbl");
-    if(pb)pb.style.width=p+"%";if(pl)pl.textContent=l;
-  },d));
-}
-
-function showOCRResult(items) {
-  const el=document.getElementById("ocrArea");
-  if(!el)return;
-  el.innerHTML=`
-    <div style="animation:pop .3s ease">
-      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);margin:12px 0">
-        <span style="color:#4ade80;font-size:16px">✓</span>
-        <div><div style="font-size:13px;font-weight:600;color:#4ade80">OCR completado</div>
-        <div style="font-size:11px;color:var(--t3);font-family:var(--fm)">${items.length} artículos detectados</div></div>
-      </div>
-      <input class="inp srch" placeholder="🔍 Buscar..." id="invSearch" oninput="filterInvoice(this.value)">
-      <div class="tbl-wrap" id="invTblWrap">${buildInvTable(items)}</div>
-      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="addInvRow()">+ Añadir artículo</button>
-      <button class="btn btn-prime" style="margin-top:10px" onclick="confirmInvoice()">Confirmar factura →</button>
-    </div>`;
-}
-
-function buildInvTable(items, q="") {
-  const filtered = q ? items.filter(i=>i.code.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q)) : items;
-  return `<table class="tbl">
-    <thead><tr><th>#</th><th>Código</th><th>Descripción</th><th>Talla</th><th>Cant.</th></tr></thead>
-    <tbody>${filtered.map((it,i)=>`
-      <tr>
-        <td style="color:var(--t3);font-family:var(--fm);font-size:10px">${String(i+1).padStart(3,"0")}</td>
-        <td class="tc-code">${it.code}</td>
-        <td style="font-size:12px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.desc}</td>
-        <td><span class="sz-tag">${it.size}</span></td>
-        <td><input class="edit-inp" value="${it.qty}" onblur="updateInvQty('${it.id}',this.value)"></td>
-      </tr>`).join("")}
-    </tbody></table>`;
-}
-
-function filterInvoice(q){
-  state.filterQ=q.toLowerCase();
-  const w=document.getElementById("invTblWrap");
-  if(w)w.innerHTML=buildInvTable(state.invoice,state.filterQ);
-}
-function updateInvQty(id,val){const n=parseInt(val);if(!isNaN(n)&&n>=0)state.invoice=state.invoice.map(i=>i.id===id?{...i,qty:n}:i);}
-function addInvRow(){const id=`I${String(state.invoice.length+1).padStart(3,"0")}`;state.invoice.push({id,code:`REF-${state.invoice.length+1}`,desc:"Nuevo artículo",size:"–",qty:1});showOCRResult(state.invoice);toast("Artículo añadido","info");}
-function confirmInvoice(){toast("✓ Factura confirmada");state.step=1;renderAll();}
-
-// STEP 2
-function renderStep2(){
-  const rows=state.invoice.map(inv=>{const sc=state.scanData.find(s=>s.code===inv.code);return{...inv,invoiceQty:inv.qty,scanned:sc?.scanned||0,inInvoice:true};});
-  const extras=state.scanData.filter(s=>!s.inInvoice);
-  const total=state.scanData.reduce((a,b)=>a+b.scanned,0);
-  const exact=rows.filter(r=>r.scanned===r.invoiceQty).length;
-  const pending=rows.filter(r=>r.scanned<r.invoiceQty).length;
-  return `
-  <div class="stats-grid">
-    <div class="stat"><div class="stat-v" style="color:var(--acc)">${total}</div><div class="stat-l">Escaneadas</div></div>
-    <div class="stat"><div class="stat-v" style="color:#22c55e">${exact}</div><div class="stat-l">Exactas</div></div>
-    <div class="stat"><div class="stat-v" style="color:#f59e0b">${pending}</div><div class="stat-l">Pendientes</div></div>
-    <div class="stat"><div class="stat-v" style="color:#94a3b8">${extras.length}</div><div class="stat-l">Fuera factura</div></div>
-  </div>
-  <div class="card">
-    <div class="card-head"><span class="card-title">📷 Escanear</span><span style="font-size:11px;color:var(--t3);font-family:var(--fm)">${exact}/${state.invoice.length}</span></div>
-    <div class="card-body">
-      <div class="scan-opts">
-        <div class="scan-opt ${state.scanMode==="camera"?"on":""}" onclick="setScanMode('camera')">
-          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          Cámara
-        </div>
-        <div class="scan-opt ${state.scanMode==="barcode"?"on":""}" onclick="setScanMode('barcode')">
-          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="3" height="16"/><rect x="7" y="4" width="1.5" height="16"/><rect x="10.5" y="4" width="2.5" height="16"/><rect x="15" y="4" width="1.5" height="16"/><rect x="18.5" y="4" width="3.5" height="16"/></svg>
-          Lector
-        </div>
-        <div class="scan-opt ${state.scanMode==="manual"?"on":""}" onclick="setScanMode('manual')">
-          <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg>
-          Manual
-        </div>
-      </div>
-      ${state.scanMode==="camera" ? `
-        <div class="cam-wrap">
-          <video id="camVideo" playsinline muted autoplay style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none"></video>
-          <canvas id="camCanvas" style="display:none"></canvas>
-          <div class="cam-corner" style="top:10px;left:10px;border-right:none;border-bottom:none;border-radius:3px 0 0 0"></div>
-          <div class="cam-corner" style="top:10px;right:10px;border-left:none;border-bottom:none;border-radius:0 3px 0 0"></div>
-          <div class="cam-corner" style="bottom:10px;left:10px;border-right:none;border-top:none;border-radius:0 0 0 3px"></div>
-          <div class="cam-corner" style="bottom:10px;right:10px;border-left:none;border-top:none;border-radius:0 0 3px 0"></div>
-          <div class="cam-beam" id="camBeam"></div>
-          <div id="camDetected" class="cam-detected" style="display:none"></div>
-          <div id="camPlaceholder" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--t2)">
-            <span style="font-size:32px">📷</span>
-            <button class="btn btn-prime btn-sm" onclick="startCamera();document.getElementById('camVideo').style.display='block';document.getElementById('camPlaceholder').style.display='none'">Activar cámara</button>
-          </div>
-        </div>
-        <div style="font-size:10px;color:var(--t3);text-align:center;margin-bottom:10px" id="camStatus">Toca "Activar cámara"</div>
-      ` : state.scanMode==="barcode" ? `
-        <div style="padding:12px;border-radius:8px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:12px;font-size:12px;color:var(--t2)">
-          🔌 Conecta el lector por USB o Bluetooth. El campo de texto recibirá el código automáticamente.
-        </div>` : ""}
-      <div class="inp-row">
-        <input class="inp" id="codeInp" placeholder="Código — pulsa Enter" onkeydown="if(event.key==='Enter')doScan()">
-        <input class="inp inp-sm" id="sizeInp" placeholder="Talla" onkeydown="if(event.key==='Enter')doScan()">
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-prime" style="margin-top:0" onclick="doScan()">Registrar</button>
-        <button class="btn btn-ghost btn-sm" onclick="demoScan()">▶ Demo</button>
-      </div>
-      <div class="div"></div>
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:8px">Registro en tiempo real</div>
-      <div class="log" id="logWrap">
-        ${state.log.length===0?`<div class="empty">📦<br>Escanea tu primera prenda</div>`:
-          state.log.map(e=>`<div class="log-item">
-            <div class="log-ico" style="background:${e.found?"rgba(34,197,94,.1)":"rgba(245,158,11,.1)"};border:1px solid ${e.found?"rgba(34,197,94,.25)":"rgba(245,158,11,.25)"};color:${e.found?"#4ade80":"#f59e0b"}">${e.found?"✓":"⚠"}</div>
-            <div style="flex:1;min-width:0"><div class="log-code">${e.code}</div><div class="log-res" style="color:${e.found?"var(--t0)":"#f59e0b"}">${e.desc}</div></div>
-            <div class="log-time">${e.time}</div>
-          </div>`).join("")}
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-head"><span class="card-title">Estado por SKU</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Código</th><th>Desc.</th><th>Fact.</th><th>Esc.</th><th>Estado</th></tr></thead>
-        <tbody>
-          ${rows.map(r=>{const s=getStatus(r.invoiceQty,r.scanned,true);const c=STATUS[s];return`<tr>
-            <td class="tc-code">${r.code}</td>
-            <td style="font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.desc}</td>
-            <td style="font-family:var(--fm);font-weight:600">${r.invoiceQty}</td>
-            <td style="font-family:var(--fm);font-weight:600;color:${r.scanned===r.invoiceQty?"#4ade80":"var(--t0)"}">${r.scanned}</td>
-            <td><span class="st-badge" style="background:${c.bg};border-color:${c.border};color:${c.color}"><span class="st-dot" style="background:${c.color}"></span>${c.label}</span></td>
-          </tr>`}).join("")}
-          ${extras.map(r=>{const c=STATUS.black;return`<tr>
-            <td class="tc-code">${r.code}</td>
-            <td style="font-size:11px;color:var(--t2)">${r.desc}</td>
-            <td style="color:var(--t3)">—</td>
-            <td style="font-family:var(--fm);font-weight:600;color:#94a3b8">${r.scanned}</td>
-            <td><span class="st-badge" style="background:${c.bg};border-color:${c.border};color:${c.color}"><span class="st-dot" style="background:${c.color}"></span>${c.label}</span></td>
-          </tr>`}).join("")}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="nav-bottom">
-    <button class="btn btn-ghost btn-sm" onclick="goStep(0)">← Anterior</button>
-    <button class="btn btn-prime btn-sm" onclick="goStep(2);stopCamera()">Revisar →</button>
-  </div>`;
-}
-
-function setScanMode(m){stopCamera();state.scanMode=m;renderStep();}
-function doScan(){const c=document.getElementById("codeInp");const s=document.getElementById("sizeInp");processScan(c.value,s?.value||"");c.value="";if(s)s.value="";c.focus();}
-function demoScan(){
-  const pending=state.invoice.filter(inv=>{const d=state.scanData.find(s=>s.code===inv.code);return !d||d.scanned<inv.qty;});
-  if(!pending.length){toast("Todas escaneadas 🎉","info");return;}
-  const pick=pending[Math.floor(Math.random()*pending.length)];
-  processScan(pick.code,pick.size);
-}
-
-// STEP 3
-function renderStep3(){
-  const rows=state.invoice.map(inv=>{const sc=state.scanData.find(s=>s.code===inv.code);return{...inv,iqty:inv.qty,scanned:sc?.scanned||0};});
-  const extras=state.scanData.filter(s=>!s.inInvoice);
-  const grouped={green:rows.filter(r=>r.scanned===r.iqty&&r.scanned>0),yellow:rows.filter(r=>r.scanned>0&&r.scanned!==r.iqty),red:rows.filter(r=>r.scanned===0),black:extras};
-  const acc=rows.length?Math.round((grouped.green.length/rows.length)*100):0;
-  return `
-  <div class="stats-grid">
-    <div class="stat"><div class="stat-v" style="color:${acc>85?"#22c55e":acc>60?"#f59e0b":"#ef4444"}">${acc}%</div><div class="stat-l">Precisión</div></div>
-    <div class="stat"><div class="stat-v" style="color:var(--acc)">${rows.reduce((a,r)=>a+r.iqty,0)}</div><div class="stat-l">Unid. factura</div></div>
-    <div class="stat"><div class="stat-v" style="color:var(--t0)">${rows.reduce((a,r)=>a+r.scanned,0)}</div><div class="stat-l">Escaneadas</div></div>
-    <div class="stat"><div class="stat-v" style="color:#ef4444">${grouped.red.length}</div><div class="stat-l">Pendientes</div></div>
-  </div>
-  ${Object.entries(grouped).filter(([,g])=>g.length>0).map(([s,g])=>{const c=STATUS[s];return`
-  <div class="card" style="border-color:${c.border}40">
-    <div class="card-head" style="background:${c.bg}80">
-      <div style="display:flex;align-items:center;gap:7px"><span class="st-dot" style="background:${c.color};width:8px;height:8px;border-radius:50%"></span><span class="card-title" style="color:${c.color}">${c.label}</span></div>
-      <span class="pill" style="background:${c.bg};color:${c.color};border:1px solid ${c.border}">${g.length}</span>
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl"><thead><tr><th>Código</th><th>Desc.</th><th>Fact.</th><th>Esc.</th><th>Dif.</th></tr></thead>
-      <tbody>${g.map(r=>{const diff=r.scanned-(r.iqty||0);return`<tr>
-        <td class="tc-code">${r.code}</td>
-        <td style="font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.desc}</td>
-        <td style="font-family:var(--fm);font-weight:600">${r.iqty??'—'}</td>
-        <td style="font-family:var(--fm);font-weight:600;color:${s==="green"?"#4ade80":"var(--t0)"}">${r.scanned}</td>
-        <td style="font-family:var(--fm);font-size:11px;color:${diff===0?"var(--t3)":diff>0?"#22c55e":"#ef4444"}">${diff===0?"—":diff>0?"+"+diff:diff}</td>
-      </tr>`}).join("")}</tbody></table>
-    </div>
-  </div>`}).join("")}
-  <div class="nav-bottom">
-    <button class="btn btn-ghost btn-sm" onclick="goStep(1)">← Escanear</button>
-    <button class="btn btn-prime btn-sm" onclick="goStep(3)">Exportar →</button>
-  </div>`;
-}
-
-// STEP 4
-function renderStep4(){
-  const rows=state.invoice.map(inv=>{const sc=state.scanData.find(s=>s.code===inv.code);const scanned=sc?.scanned||0;return{code:inv.code,desc:inv.desc,size:inv.size,iqty:inv.qty,scanned,status:getStatus(inv.qty,scanned,true)};});
-  const extras=state.scanData.filter(s=>!s.inInvoice).map(s=>({code:s.code,desc:s.desc,size:s.size,iqty:0,scanned:s.scanned,status:"black"}));
-  const all=[...rows,...extras];
-  const counts={green:0,yellow:0,red:0,black:0};all.forEach(r=>counts[r.status]++);
+// ═══ STEP 4 ═══
+function rS4(){
+  const rows=S.inv.map(function(inv){const sc=S.scans.find(function(s){return s.code===inv.code;});const scanned=sc?sc.scanned:0;return{code:inv.code,desc:inv.desc,size:inv.size,iqty:inv.qty,scanned:scanned,status:gst(inv.qty,scanned,true)};});
+  const extras=S.scans.filter(function(s){return!s.inInvoice;}).map(function(s){return Object.assign({},s,{iqty:0,status:"black"});});
+  const all=rows.concat(extras);
+  const counts={green:0,yellow:0,red:0,black:0};
+  all.forEach(function(r){counts[r.status]++;});
   const acc=rows.length?Math.round((counts.green/rows.length)*100):0;
-  const csvData=[["Código","Descripción","Talla","Cant. Factura","Cant. Escaneada","Diferencia","Estado"],...all.map(r=>[r.code,r.desc,r.size,r.iqty,r.scanned,r.scanned-r.iqty,STATUS[r.status].label])];
-  window._csvData=csvData;
-  return `
-  <div class="stats-grid">
-    <div class="stat"><div class="stat-v" style="color:${acc>85?"#22c55e":acc>60?"#f59e0b":"#ef4444"}">${acc}%</div><div class="stat-l">Precisión</div></div>
-    <div class="stat"><div class="stat-v" style="color:var(--acc)">${all.reduce((a,r)=>a+r.scanned,0)}</div><div class="stat-l">Escaneadas</div></div>
-    <div class="stat"><div class="stat-v" style="color:#22c55e">${counts.green}</div><div class="stat-l">Coinciden</div></div>
-    <div class="stat"><div class="stat-v" style="color:#ef4444">${counts.red}</div><div class="stat-l">Sin escanear</div></div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <div class="export-box">
-        <div style="font-size:32px;margin-bottom:12px">📊</div>
-        <div style="font-size:17px;font-weight:700;margin-bottom:6px">Exportar resultados</div>
-        <div style="font-size:12px;color:var(--t1);margin-bottom:18px">Descarga el archivo CSV y ábrelo en Google Sheets o Excel</div>
-        <button class="btn-export" onclick="downloadCSV()">⬇ Descargar CSV</button>
-      </div>
-      <div class="div"></div>
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:10px">Leyenda de colores</div>
-      ${Object.entries(STATUS).map(([k,v])=>`
-        <div class="legend-item" style="border-color:${v.border}40;background:${v.bg}">
-          <div class="legend-sw" style="background:${v.color}"></div>
-          <span style="font-size:12px;font-weight:600;color:${v.color};flex:1">${v.label}</span>
-          <span class="pill" style="background:${v.bg};color:${v.color};border:1px solid ${v.border}">${counts[k]}</span>
-        </div>`).join("")}
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-head"><span class="card-title">Vista previa</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl"><thead><tr><th>Código</th><th>Desc.</th><th>Fact.</th><th>Esc.</th><th>Estado</th></tr></thead>
-      <tbody>${all.slice(0,10).map(r=>{const c=STATUS[r.status];return`<tr style="background:${c.bg}80">
-        <td class="tc-code">${r.code}</td>
-        <td style="font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.desc}</td>
-        <td style="font-family:var(--fm)">${r.iqty||"—"}</td>
-        <td style="font-family:var(--fm);color:${c.color};font-weight:600">${r.scanned}</td>
-        <td><div style="width:10px;height:10px;border-radius:2px;background:${c.color}"></div></td>
-      </tr>`}).join("")}</tbody></table>
-      ${all.length>10?`<div style="padding:8px;font-size:11px;color:var(--t3);text-align:center">+${all.length-10} filas más en el CSV</div>`:""}
-    </div>
-  </div>
-  <div class="nav-bottom">
-    <button class="btn btn-ghost btn-sm" onclick="goStep(2)">← Revisar</button>
-    <button class="btn btn-ghost btn-sm" onclick="newSession()">🔄 Nueva sesión</button>
-  </div>`;
+  let html='<div class="card"><div class="card-head"><span class="card-title">📊 Google Sheets</span></div><div class="card-body">'
+    +'<div class="sheets-card">'
+    +'<div style="font-size:36px;margin-bottom:10px">📊</div>'
+    +'<div style="font-size:16px;font-weight:700;margin-bottom:6px">Exportar a Google Sheets</div>'
+    +'<div style="font-size:12px;color:var(--t1);margin-bottom:18px;line-height:1.6">Genera la hoja con colores automáticos<br>y formato profesional.</div>'
+    +'<button class="btn-export" id="eb" onclick="doExp()">📤 Exportar ahora</button>'
+    +'</div><div class="div"></div>'
+    +'<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:8px">Leyenda de colores</div>';
+  Object.entries(ST).forEach(function(entry){
+    const k=entry[0],v=entry[1];
+    html+='<div class="legend-row" style="border-color:'+v.border+';background:'+v.bg+'">'
+      +'<div class="legend-swatch" style="background:'+v.color+'"></div>'
+      +'<span style="flex:1;font-size:12px;font-weight:600;color:'+v.color+'">'+v.label+'</span>'
+      +'<span class="pill" style="background:'+v.bg+';color:'+v.color+';border:1px solid '+v.border+'">'+counts[k]+'</span>'
+      +'</div>';
+  });
+  html+='</div></div>'
+    +'<div class="stats-row">'
+    +'<div class="stat"><div class="stat-v" style="color:'+(acc>85?"#22c55e":acc>60?"#f59e0b":"#ef4444")+'">'+acc+'%</div><div class="stat-l">Precisión</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:var(--acc)">'+all.reduce(function(a,r){return a+r.scanned;},0)+'</div><div class="stat-l">Total esc.</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:var(--t1)">'+S.inv.reduce(function(a,i){return a+i.qty;},0)+'</div><div class="stat-l">Total fact.</div></div>'
+    +'<div class="stat"><div class="stat-v" style="color:var(--t0)">'+all.length+'</div><div class="stat-l">SKUs</div></div>'
+    +'</div>'
+    +'<div class="nav-bottom"><button class="btn btn-ghost" onclick="navTo(2)">← Anterior</button><button class="btn btn-ghost" onclick="resetAll()">🔄 Nueva sesión</button></div>';
+  return html;
+}
+function doExp(){const btn=document.getElementById("eb");if(btn){btn.textContent="⟳ Exportando...";btn.disabled=true;}setTimeout(function(){toast("✓ Exportado a Google Sheets","success");if(btn){btn.textContent="✓ Exportado correctamente";btn.disabled=false;}},2000);}
+function resetAll(){stopCam();S={step:0,inv:DI.map(function(x){return Object.assign({},x);}),scans:[],log:[],mode:"manual",stream:null,camOn:false,fq:""};render();toast("Nueva sesión iniciada","info");}
+
+// ═══ SCAN ═══
+function setSM(m){if(S.mode==="camera"&&m!=="camera")stopCam();S.mode=m;rStep();if(m==="manual")setTimeout(function(){const i=document.getElementById("si");if(i)i.focus();},150);}
+
+function doScan(){
+  const i=document.getElementById("si");
+  const sz=document.getElementById("sz");
+  if(!i)return;
+  const code=(i.value||"").trim().toUpperCase();
+  const size=(sz?sz.value||"":"").trim()||"–";
+  if(!code){toast("Escribe o escanea un código primero","warning");return;}
+  procScan(code,size);
+  i.value="";
+  if(sz)sz.value="";
+  setTimeout(function(){if(i)i.focus();},100);
 }
 
-function downloadCSV(){
-  if(!window._csvData)return;
-  const csv=window._csvData.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
-  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;
-  a.download=`inventario-${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  toast("✓ CSV descargado — ábrelo en Google Sheets","success");
+function demoSc(){
+  const p=S.inv.filter(function(inv){const d=S.scans.find(function(s){return s.code===inv.code;});return!d||d.scanned<inv.qty;});
+  if(!p.length){toast("Todas las prendas escaneadas 🎉","info");return;}
+  const pick=p[Math.floor(Math.random()*p.length)];
+  procScan(pick.code,pick.size);
 }
 
-function newSession(){stopCamera();state={...state,scanData:[],log:[],step:0};renderAll();}
-
-function bindStep(){
-  // Bind file input
-  const dz=document.getElementById("dropZone");
-  const fi=document.getElementById("fileInp");
-  const db=document.getElementById("demoBtn");
-  if(dz){
-    dz.addEventListener("click",()=>fi.click());
-    dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("over")});
-    dz.addEventListener("dragleave",()=>dz.classList.remove("over"));
-    dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("over");const f=e.dataTransfer.files[0];if(f)handleFile(f);});
+function procScan(code,size){
+  code=(code||"").toUpperCase().trim();
+  if(!code)return;
+  const match=S.inv.find(function(inv){
+    const a=inv.code.toUpperCase();
+    const b=code;
+    return a===b||a.replace(/[-\s]/g,"")===b.replace(/[-\s]/g,"")||b.startsWith(a)||a.startsWith(b);
+  });
+  const entry={id:uid(),code:code,size:size||"–",time:nt(),found:!!match,desc:match?match.desc:"No en factura"};
+  S.log=[entry].concat(S.log.slice(0,59));
+  if(match){
+    const ex=S.scans.find(function(x){return x.code===match.code;});
+    if(ex)S.scans=S.scans.map(function(x){return x.code===match.code?Object.assign({},x,{scanned:x.scanned+1}):x;});
+    else S.scans=S.scans.concat([{id:match.id,code:match.code,desc:match.desc,size:match.size,invoiceQty:match.qty,scanned:1,inInvoice:true}]);
+    toast("✓ "+match.desc+" ["+match.size+"]","success");
+  } else {
+    const ex=S.scans.find(function(x){return x.code===code&&!x.inInvoice;});
+    if(ex)S.scans=S.scans.map(function(x){return x.code===code?Object.assign({},x,{scanned:x.scanned+1}):x;});
+    else S.scans=S.scans.concat([{id:uid(),code:code,desc:"Desconocido",size:size||"?",invoiceQty:0,scanned:1,inInvoice:false}]);
+    toast("⚠ Fuera de factura: "+code,"warning");
   }
-  if(fi) fi.addEventListener("change",e=>{if(e.target.files[0])handleFile(e.target.files[0]);});
-  if(db) db.addEventListener("click",()=>{state.invoice=JSON.parse(JSON.stringify(DEMO));showOCRResult(state.invoice);});
-  // Bind camera video show
-  const cv=document.getElementById("camVideo");
-  if(cv&&camStream){cv.srcObject=camStream;cv.style.display="block";}
+  rCtr();
+  // Actualizar log en DOM sin re-render completo
+  const sl=document.getElementById("sl");
+  if(sl){
+    const em=sl.querySelector("div[style*='text-align:center']");
+    if(em)em.remove();
+    const item=document.createElement("div");
+    item.className="log-item";
+    item.innerHTML='<div class="log-ico" style="background:'+(match?"rgba(34,197,94,.1)":"rgba(245,158,11,.1)")+';border:1px solid '+(match?"rgba(34,197,94,.25)":"rgba(245,158,11,.25)")+';color:'+(match?"#4ade80":"#f59e0b")+'">'+(match?"✓":"⚠")+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-family:var(--fm);font-size:10px;color:var(--t1)">'+code+' <span class="sz-tag" style="font-size:8px">'+size+'</span></div>'
+      +'<div style="font-size:12px;font-weight:500;color:'+(match?"var(--t0)":"#f59e0b")+'">'+entry.desc+'</div></div>'
+      +'<div style="font-family:var(--fm);font-size:9px;color:var(--t3)">'+entry.time+'</div>';
+    sl.insertBefore(item,sl.firstChild);
+  }
+  // Actualizar stats sin re-render
+  const svs=document.querySelectorAll(".stat-v");
+  if(svs.length>=4){
+    svs[0].textContent=S.scans.reduce(function(a,b){return a+b.scanned;},0);
+    svs[1].textContent=S.inv.filter(function(inv){const sc=S.scans.find(function(s){return s.code===inv.code;});return sc&&sc.scanned===inv.qty;}).length;
+    svs[2].textContent=S.inv.filter(function(inv){const sc=S.scans.find(function(s){return s.code===inv.code;});return!sc||sc.scanned<inv.qty;}).length;
+    svs[3].textContent=S.scans.filter(function(s){return!s.inInvoice;}).length;
+  }
 }
 
-async function handleFile(f){
-  showOCRProgress(f.name);
+// ═══ CAMERA ═══
+let fMode="environment",rafId=null,zxR=null;
+
+async function startCam(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast("Tu navegador no soporta cámara","error");return;}
   try{
-    const text=await extractText(f);
-    const parsed=parseOCR(text);
-    if(parsed.length===0){toast("No se detectaron artículos. Revisa el PDF.","warning");state.invoice=JSON.parse(JSON.stringify(DEMO));}
-    else{state.invoice=parsed;}
-    showOCRResult(state.invoice);
-  }catch(e){
-    toast("Error leyendo el archivo","error");
-    state.invoice=JSON.parse(JSON.stringify(DEMO));
-    showOCRResult(state.invoice);
+    if(S.stream){S.stream.getTracks().forEach(function(t){t.stop();});S.stream=null;}
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:fMode},width:{ideal:1280},height:{ideal:720}},audio:false});
+    S.stream=stream;S.camOn=true;rStep();
+    setTimeout(async function(){
+      const v=document.getElementById("cv");
+      if(v){v.srcObject=stream;await v.play();}
+      ldZX();startDec();
+    },200);
+  }catch(err){
+    if(err.name==="NotAllowedError")toast("Permiso denegado — actívalo en ajustes del navegador","error");
+    else if(err.name==="NotFoundError")toast("No se encontró ninguna cámara","error");
+    else toast("Error cámara: "+err.message,"error");
+  }
+}
+function stopCam(){if(S.stream){S.stream.getTracks().forEach(function(t){t.stop();});S.stream=null;}if(rafId){cancelAnimationFrame(rafId);rafId=null;}S.camOn=false;}
+function swCam(){fMode=fMode==="environment"?"user":"environment";stopCam();S.camOn=false;startCam();}
+function ldZX(){if(window.ZXingBrowser||window.__ZXing__)return;const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.min.js";s.onload=function(){window.__ZXing__=window.ZXingBrowser;};document.head.appendChild(s);}
+function startDec(){
+  function dec(){
+    const v=document.getElementById("cv"),c=document.getElementById("cc");
+    if(!v||!c||v.readyState<2){rafId=requestAnimationFrame(dec);return;}
+    c.width=v.videoWidth;c.height=v.videoHeight;
+    const ctx=c.getContext("2d");ctx.drawImage(v,0,0);
+    const ZX=window.ZXingBrowser||window.__ZXing__;
+    if(ZX){try{if(!zxR&&ZX.BrowserMultiFormatReader)zxR=new ZX.BrowserMultiFormatReader();if(zxR&&zxR.decodeFromCanvas){zxR.decodeFromCanvas(c).then(function(r){if(r&&r.text){const el=document.getElementById("cr");if(el){el.textContent="✓ "+r.text;el.style.display="block";setTimeout(function(){if(el)el.style.display="none";},1500);}procScan(r.text,"–");}}).catch(function(){});}}catch(e){}}
+    rafId=requestAnimationFrame(dec);
+  }
+  rafId=requestAnimationFrame(dec);
+}
+
+function bindEv(){
+  if(S.camOn&&S.step===1){
+    setTimeout(function(){
+      const v=document.getElementById("cv");
+      if(v&&S.stream){v.srcObject=S.stream;v.play().catch(function(){});}
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+      startDec();
+    },100);
+  }
+  // Lector de barras: detectar Enter automático del lector en el campo si no lo ve el keydown
+  const si=document.getElementById("si");
+  if(si&&S.mode==="barcode"){
+    si.addEventListener("change",function(){if(this.value.trim())doScan();});
   }
 }
 
-// Init
-renderAll();
+render();
 </script>
 </body>
 </html>
