@@ -355,13 +355,13 @@ function rS4(){
   const counts={green:0,yellow:0,red:0,black:0};
   all.forEach(function(r){counts[r.status]++;});
   const acc=rows.length?Math.round((counts.green/rows.length)*100):0;
-  let html='<div class="card"><div class="card-head"><span class="card-title">📊 Google Sheets</span></div><div class="card-body">'
+  let html='<div class="card"><div class="card-head"><span class="card-title">💬 Compartir Resumen</span></div><div class="card-body">'
     +'<div class="sheets-card">'
-    +'<div style="font-size:36px;margin-bottom:10px">📊</div>'
-    +'<div style="font-size:16px;font-weight:700;margin-bottom:6px">Exportar a Google Sheets</div>'
-    +'<div style="font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.6">Crea una hoja en tu Google Drive<br>con colores automáticos por estado.</div>'
-    +'<div style="font-size:11px;color:var(--t3);margin-bottom:18px;line-height:1.5">Te pedirá permiso para acceder<br>a Google Sheets — es seguro ✓</div>'
-    +'<button class="btn-export" id="eb" onclick="doExp()">📊 Crear hoja en Google Sheets</button>'
+    +'<div style="font-size:36px;margin-bottom:10px">📱</div>'
+    +'<div style="font-size:16px;font-weight:700;margin-bottom:6px">Compartir por WhatsApp</div>'
+    +'<div style="font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.6">Envía el resumen completo<br>directamente por WhatsApp.</div>'
+    +'<div style="font-size:11px;color:var(--t3);margin-bottom:18px">Sin configuración — funciona al instante ✓</div>'
+    +'<button class="btn-export" id="eb" onclick="doExp()" style="background:#25D366">💬 Compartir por WhatsApp</button>'
     +'</div><div class="div"></div>'
     +'<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:8px">Leyenda de colores</div>';
   Object.entries(ST).forEach(function(entry){
@@ -382,7 +382,101 @@ function rS4(){
     +'<div class="nav-bottom"><button class="btn btn-ghost" onclick="navTo(2)">← Anterior</button><button class="btn btn-ghost" onclick="resetAll()">🔄 Nueva sesión</button></div>';
   return html;
 }
-// ═══ GOOGLE SHEETS INTEGRATION ═══
+// ═══ EXPORT ═══
+function doExp(){
+  const btn=document.getElementById("eb");
+  if(btn){btn.textContent="⟳ Generando...";btn.disabled=true;}
+
+  const rows=S.inv.map(function(inv){
+    const sc=S.scans.find(function(s){return s.code===inv.code;});
+    const scanned=sc?sc.scanned:0;
+    const diff=scanned-inv.qty;
+    let estado;
+    if(scanned===0)estado="❌ Sin escanear";
+    else if(scanned===inv.qty)estado="✅ Exacto";
+    else if(scanned<inv.qty)estado="⚠️ Faltan "+(inv.qty-scanned);
+    else estado="⚠️ Sobran "+(scanned-inv.qty);
+    return{code:inv.code,desc:inv.desc,size:inv.size,iqty:inv.qty,scanned,diff,estado};
+  });
+  const extras=S.scans.filter(function(s){return!s.inInvoice;}).map(function(s){
+    return{code:s.code,desc:s.desc,size:s.size,iqty:0,scanned:s.scanned,diff:0,estado:"⬛ Fuera de factura"};
+  });
+  const all=rows.concat(extras);
+
+  const fecha=new Date().toLocaleDateString("es-ES");
+  const exact=rows.filter(function(r){return r.scanned===r.iqty&&r.scanned>0;}).length;
+  const faltan=rows.filter(function(r){return r.scanned<r.iqty;}).length;
+  const sobran=extras.length;
+
+  // Texto para WhatsApp
+  var msg="*InvenTrack Pro — "+fecha+"*\n";
+  msg+="━━━━━━━━━━━━━━━━━━\n";
+  msg+="✅ Exactos: "+exact+" | ⚠️ Diferencias: "+faltan+" | ⬛ Fuera: "+sobran+"\n";
+  msg+="━━━━━━━━━━━━━━━━━━\n\n";
+
+  all.forEach(function(r){
+    msg+=r.estado+"\n";
+    msg+="📦 "+r.code+" — "+r.desc+" ("+r.size+")\n";
+    msg+="Factura: "+r.iqty+" | Escaneado: "+r.scanned+"\n\n";
+  });
+
+  msg+="━━━━━━━━━━━━━━━━━━\n";
+  msg+="_Generado con InvenTrack Pro_";
+
+  // Mostrar opciones
+  const modal=document.createElement("div");
+  modal.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:flex-end;";
+  modal.innerHTML='<div style="background:#09111a;border-radius:16px 16px 0 0;padding:24px 20px;width:100%;border-top:1px solid #1a2e42">'
+    +'<div style="font-size:16px;font-weight:700;margin-bottom:6px;color:#e8f2fc">Exportar inventario</div>'
+    +'<div style="font-size:12px;color:#5a88a8;margin-bottom:20px">'+fecha+' · '+all.length+' artículos</div>'
+
+    +'<a href="https://wa.me/?text='+encodeURIComponent(msg)+'" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;background:#25d366;color:#000;text-decoration:none;font-weight:600;font-size:14px;margin-bottom:10px">'
+    +'<span style="font-size:22px">📱</span> Enviar por WhatsApp</a>'
+
+    +'<button onclick="copyText()" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;background:#1a2e42;color:#e8f2fc;font-weight:600;font-size:14px;width:100%;border:1px solid #1f3750;margin-bottom:10px;cursor:pointer">'
+    +'<span style="font-size:22px">📋</span> Copiar resumen</button>'
+
+    +'<button onclick="exportCSV()" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;background:#1a2e42;color:#e8f2fc;font-weight:600;font-size:14px;width:100%;border:1px solid #1f3750;margin-bottom:20px;cursor:pointer">'
+    +'<span style="font-size:22px">📊</span> Descargar para Excel/Sheets</button>'
+
+    +'<button onclick="this.closest(\'div\').parentElement.remove()" style="width:100%;padding:12px;border-radius:10px;background:transparent;color:#5a88a8;font-size:14px;border:1px solid #1a2e42;cursor:pointer">Cancelar</button>'
+    +'</div>';
+
+  // Guardar msg para copiar
+  window._exportMsg=msg;
+  window._exportRows=all;
+  document.body.appendChild(modal);
+
+  if(btn){btn.textContent="📤 Exportar";btn.disabled=false;}
+}
+
+function copyText(){
+  if(navigator.clipboard&&window._exportMsg){
+    navigator.clipboard.writeText(window._exportMsg).then(function(){
+      toast("✓ Resumen copiado — pégalo donde quieras","success");
+    }).catch(function(){
+      toast("Copia el texto manualmente","warning");
+    });
+  }
+}
+
+function exportCSV(){
+  const all=window._exportRows||[];
+  const fecha=new Date().toLocaleDateString("es-ES").replace(/\//g,"-");
+  const header="Código,Descripción,Talla,Cant. Factura,Cant. Escaneada,Diferencia,Estado\n";
+  const csvRows=all.map(function(r){
+    return[r.code,'"'+r.desc+'"',r.size,r.iqty,r.scanned,r.diff,'"'+r.estado.replace(/[✅❌⚠️⬛]/g,"").trim()+'"'].join(",");
+  });
+  const csv="\uFEFF"+header+csvRows.join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="InvenTrack-"+fecha+".csv";
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  toast("✓ CSV descargado — ábrelo en Google Sheets","success");
+}
 const GAPI_CLIENT_ID="762235558527-ikpopjf8ktqa3l8rj0ugfpd5p9uqbnhq.apps.googleusercontent.com";
 const GAPI_SCOPES="https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file";
 let gapiReady=false;
