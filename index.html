@@ -384,80 +384,93 @@ function rS4(){
 }
 // ═══ EXPORT ═══
 function doExp(){
-  const btn=document.getElementById("eb");
-  if(btn){btn.textContent="⟳ Generando...";btn.disabled=true;}
-
   const rows=S.inv.map(function(inv){
     const sc=S.scans.find(function(s){return s.code===inv.code;});
     const scanned=sc?sc.scanned:0;
-    const diff=scanned-inv.qty;
     let estado;
-    if(scanned===0)estado="❌ Sin escanear";
-    else if(scanned===inv.qty)estado="✅ Exacto";
-    else if(scanned<inv.qty)estado="⚠️ Faltan "+(inv.qty-scanned);
-    else estado="⚠️ Sobran "+(scanned-inv.qty);
-    return{code:inv.code,desc:inv.desc,size:inv.size,iqty:inv.qty,scanned,diff,estado};
+    if(scanned===0)estado="PENDIENTE";
+    else if(scanned===inv.qty)estado="COMPLETO";
+    else if(scanned<inv.qty)estado="FALTANTE";
+    else estado="SOBRANTE";
+    return[inv.code,inv.desc,inv.size,inv.qty,scanned,estado];
   });
   const extras=S.scans.filter(function(s){return!s.inInvoice;}).map(function(s){
-    return{code:s.code,desc:s.desc,size:s.size,iqty:0,scanned:s.scanned,diff:0,estado:"⬛ Fuera de factura"};
+    return[s.code,s.desc,s.size,"—",s.scanned,"NO EN FACTURA"];
   });
   const all=rows.concat(extras);
 
-  const fecha=new Date().toLocaleDateString("es-ES");
-  const exact=rows.filter(function(r){return r.scanned===r.iqty&&r.scanned>0;}).length;
-  const faltan=rows.filter(function(r){return r.scanned<r.iqty;}).length;
-  const sobran=extras.length;
-
-  // Texto para WhatsApp
-  var msg="*InvenTrack Pro — "+fecha+"*\n";
-  msg+="━━━━━━━━━━━━━━━━━━\n";
-  msg+="✅ Exactos: "+exact+" | ⚠️ Diferencias: "+faltan+" | ⬛ Fuera: "+sobran+"\n";
-  msg+="━━━━━━━━━━━━━━━━━━\n\n";
-
+  // Generar texto con tabs para pegar en Sheets
+  let tsv="Codigo\tDescripcion\tTalla\tFactura\tEscaneado\tEstado\n";
   all.forEach(function(r){
-    msg+=r.estado+"\n";
-    msg+="📦 "+r.code+" — "+r.desc+" ("+r.size+")\n";
-    msg+="Factura: "+r.iqty+" | Escaneado: "+r.scanned+"\n\n";
+    tsv+=r[0]+"\t"+r[1]+"\t"+r[2]+"\t"+r[3]+"\t"+r[4]+"\t"+r[5]+"\n";
   });
 
-  msg+="━━━━━━━━━━━━━━━━━━\n";
-  msg+="_Generado con InvenTrack Pro_";
-
-  // Mostrar opciones
-  const modal=document.createElement("div");
-  modal.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:flex-end;";
-  modal.innerHTML='<div style="background:#09111a;border-radius:16px 16px 0 0;padding:24px 20px;width:100%;border-top:1px solid #1a2e42">'
-    +'<div style="font-size:16px;font-weight:700;margin-bottom:6px;color:#e8f2fc">Exportar inventario</div>'
-    +'<div style="font-size:12px;color:#5a88a8;margin-bottom:20px">'+fecha+' · '+all.length+' artículos</div>'
-
-    +'<a href="https://wa.me/?text='+encodeURIComponent(msg)+'" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;background:#25d366;color:#000;text-decoration:none;font-weight:600;font-size:14px;margin-bottom:10px">'
-    +'<span style="font-size:22px">📱</span> Enviar por WhatsApp</a>'
-
-    +'<button onclick="copyText()" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;background:#1a2e42;color:#e8f2fc;font-weight:600;font-size:14px;width:100%;border:1px solid #1f3750;margin-bottom:10px;cursor:pointer">'
-    +'<span style="font-size:22px">📋</span> Copiar resumen</button>'
-
-    +'<button onclick="exportCSV()" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;background:#1a2e42;color:#e8f2fc;font-weight:600;font-size:14px;width:100%;border:1px solid #1f3750;margin-bottom:20px;cursor:pointer">'
-    +'<span style="font-size:22px">📊</span> Descargar para Excel/Sheets</button>'
-
-    +'<button onclick="this.closest(\'div\').parentElement.remove()" style="width:100%;padding:12px;border-radius:10px;background:transparent;color:#5a88a8;font-size:14px;border:1px solid #1a2e42;cursor:pointer">Cancelar</button>'
+  // Mostrar pantalla para copiar
+  const overlay=document.createElement("div");
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:99999;display:flex;flex-direction:column;padding:16px;";
+  overlay.innerHTML=
+    '<div style="color:#e8f2fc;font-size:15px;font-weight:700;margin-bottom:4px">📋 Copia y pega en Google Sheets</div>'
+    +'<div style="color:#5a88a8;font-size:11px;margin-bottom:12px">1. Toca "Copiar" abajo<br>2. Abre Google Sheets → celda A1 → Pegar</div>'
+    +'<textarea id="copy-area" readonly style="flex:1;background:#0d1822;color:#e8f2fc;border:1px solid #1a2e42;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;resize:none;-webkit-user-select:all;user-select:all">'+tsv+'</textarea>'
+    +'<div style="display:flex;gap:8px;margin-top:12px">'
+    +'<button id="copy-btn" style="flex:2;padding:14px;border-radius:8px;background:#00d4ff;color:#000;font-weight:700;border:none;font-size:14px;cursor:pointer">📋 Copiar todo</button>'
+    +'<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="flex:1;padding:14px;border-radius:8px;background:#1a2e42;color:#e8f2fc;font-weight:600;border:none;font-size:14px;cursor:pointer">Cerrar</button>'
     +'</div>';
+  document.body.appendChild(overlay);
 
-  // Guardar msg para copiar
-  window._exportMsg=msg;
-  window._exportRows=all;
-  document.body.appendChild(modal);
-
-  if(btn){btn.textContent="📤 Exportar";btn.disabled=false;}
+  // Auto seleccionar y copiar
+  setTimeout(function(){
+    const ta=document.getElementById("copy-area");
+    const btn=document.getElementById("copy-btn");
+    if(ta){ta.focus();ta.select();ta.setSelectionRange(0,99999);}
+    if(btn){
+      btn.addEventListener("click",function(){
+        if(navigator.clipboard){
+          navigator.clipboard.writeText(tsv).then(function(){
+            btn.textContent="✓ Copiado — ve a Sheets y pega";
+            btn.style.background="#22c55e";
+          });
+        } else {
+          if(ta){ta.select();ta.setSelectionRange(0,99999);}
+          document.execCommand("copy");
+          btn.textContent="✓ Copiado — ve a Sheets y pega";
+          btn.style.background="#22c55e";
+        }
+      });
+    }
+  },200);
 }
 
 function copyText(){
-  if(navigator.clipboard&&window._exportMsg){
-    navigator.clipboard.writeText(window._exportMsg).then(function(){
-      toast("✓ Resumen copiado — pégalo donde quieras","success");
-    }).catch(function(){
-      toast("Copia el texto manualmente","warning");
-    });
-  }
+  if(!window._exportRows)return;
+  const all=window._exportRows;
+  // Generar texto formato tabla para Google Sheets
+  // Cada columna separada por TAB para pegar directo en Sheets
+  let tsv="Código\tDescripción\tTalla\tCant. Factura\tCant. Escaneada\tDiferencia\tEstado\n";
+  all.forEach(function(r){
+    const diff=r.scanned-r.iqty;
+    const estado=r.estado.replace(/[✅❌⚠️⬛]/g,"").trim();
+    tsv+=r.code+"\t"+r.desc+"\t"+r.size+"\t"+r.iqty+"\t"+r.scanned+"\t"+(diff===0?"0":diff)+"\t"+estado+"\n";
+  });
+
+  // Mostrar en pantalla para copiar manualmente
+  const overlay=document.createElement("div");
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;display:flex;flex-direction:column;padding:16px;";
+  overlay.innerHTML=
+    '<div style="color:#e8f2fc;font-size:14px;font-weight:700;margin-bottom:8px">📋 Copia este texto</div>'
+    +'<div style="color:#5a88a8;font-size:11px;margin-bottom:12px">Mantén pulsado → Seleccionar todo → Copiar<br>Luego pégalo en Google Sheets</div>'
+    +'<textarea id="copy-area" style="flex:1;background:#0d1822;color:#e8f2fc;border:1px solid #1a2e42;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;resize:none;-webkit-user-select:all;user-select:all">'+tsv+'</textarea>'
+    +'<div style="display:flex;gap:8px;margin-top:12px">'
+    +'<button onclick="var t=document.getElementById(\'copy-area\');t.select();t.setSelectionRange(0,99999);navigator.clipboard&&navigator.clipboard.writeText(t.value).then(function(){alert(\'✓ Copiado\');}).catch(function(){});" style="flex:1;padding:12px;border-radius:8px;background:#00d4ff;color:#000;font-weight:700;border:none;font-size:13px;cursor:pointer">📋 Copiar</button>'
+    +'<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="flex:1;padding:12px;border-radius:8px;background:#1a2e42;color:#e8f2fc;font-weight:600;border:none;font-size:13px;cursor:pointer">Cerrar</button>'
+    +'</div>';
+  document.body.appendChild(overlay);
+
+  // Auto seleccionar
+  setTimeout(function(){
+    const ta=document.getElementById("copy-area");
+    if(ta){ta.focus();ta.select();ta.setSelectionRange(0,99999);}
+  },200);
 }
 
 function exportCSV(){
